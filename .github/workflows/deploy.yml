@@ -25,11 +25,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Requiere que Pages ya este habilitado en el repo:
+      # Settings > Pages > Source: "GitHub Actions".
+      # Es un paso manual de una sola vez: GITHUB_TOKEN no tiene
+      # permisos para activarlo por su cuenta.
       - name: Configurar Pages
         uses: actions/configure-pages@v5
-        with:
-          # Habilita Pages en el repo si todavia no estaba activado
-          enablement: true
 
       # La app es estatica: se sube la carpeta app/ tal cual, sin build.
       - name: Subir la carpeta app/
