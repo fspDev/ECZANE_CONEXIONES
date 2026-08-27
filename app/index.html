@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Conexiones que importan · Eczane · AOCC 2026</title>
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<div id="viewport">
+  <div id="stage">
+
+    <div class="lineas lineas--top"><span></span><span></span><span></span><span></span></div>
+    <div class="lineas lineas--bottom"><span></span><span></span><span></span><span></span></div>
+
+    <!-- ============ INICIO ============ -->
+    <section class="pantalla" id="pantalla-inicio">
+      <img class="logo" id="logo-inicio" src="assets/img/Logotipo-Eczane_color-compuesto.png" alt="Laboratorio Eczane">
+      <h1 class="titulo-obra" id="titulo-inicio"></h1>
+      <p class="bajada" id="bajada-inicio"></p>
+      <p class="aliado" id="aliado-inicio"></p>
+      <button class="boton" id="btn-iniciar"></button>
+    </section>
+
+    <!-- ============ CUENTA REGRESIVA ============ -->
+    <section class="pantalla" id="pantalla-cuenta">
+      <h2 class="cuenta-titulo" id="cuenta-titulo"></h2>
+      <p class="cuenta-sub" id="cuenta-sub"></p>
+      <div class="cuenta-num" id="cuenta-num">3</div>
+    </section>
+
+    <!-- ============ JUEGO ============ -->
+    <section class="pantalla" id="pantalla-juego">
+
+      <div class="hud">
+        <img class="logo logo--chico" src="assets/img/Logotipo-Eczane_color-simple.png" alt="Eczane">
+        <div class="hud-dato der">
+          <span class="hud-label">Conexiones</span>
+          <span class="hud-valor" id="marcador">0/12</span>
+        </div>
+        <div class="hud-dato der">
+          <span class="hud-label">Tiempo</span>
+          <span class="hud-valor" id="reloj">60</span>
+        </div>
+      </div>
+
+      <div class="barra-tiempo"><i id="barra"></i></div>
+
+      <div class="fase-rotulo">
+        <b id="fase-num">Tanda 1 de 4</b>
+        <span id="fase-titulo"></span>
+      </div>
+      <p class="instruccion" id="instruccion"></p>
+
+      <div class="tablero" id="tablero">
+        <svg id="lineas-svg" preserveAspectRatio="none"></svg>
+        <div class="grilla" id="grilla"></div>
+      </div>
+
+      <div class="aviso" id="aviso"></div>
+    </section>
+
+    <!-- ============ CIERRE ============ -->
+    <section class="pantalla" id="pantalla-cierre">
+      <img class="logo logo--chico" src="assets/img/Logotipo-Eczane_color-compuesto.png" alt="Laboratorio Eczane">
+      <div class="marcador-final"><b id="cierre-num">0</b><span id="cierre-total">/12</span></div>
+      <p class="marcador-label">conexiones logradas</p>
+      <div class="placas-cierre" id="placas-cierre"></div>
+      <p class="cierre-msg" id="cierre-msg"></p>
+      <p class="cierre-apoyo" id="cierre-apoyo"></p>
+      <button class="boton" id="btn-reiniciar"></button>
+    </section>
+
+    <!-- ============ MODAL: NOVEDAD DESBLOQUEADA ============ -->
+    <div class="modal" id="modal-novedad">
+      <div class="placa">
+        <div class="candado">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#f37b20" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="11" width="18" height="11" rx="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 9.9-1"></path>
+          </svg>
+        </div>
+        <p class="placa-kicker" id="nov-kicker"></p>
+        <h3 class="placa-titulo" id="nov-titulo"></h3>
+        <p class="placa-bajada" id="nov-bajada"></p>
+        <p class="placa-detalle" id="nov-detalle"></p>
+        <img class="placa-img" id="nov-img" alt="">
+        <div class="placa-qr-caja" id="nov-qr"></div>
+        <button class="boton boton--placa" id="btn-novedad"></button>
+      </div>
+    </div>
+
+    <!-- ============ MODAL: CAMBIO DE FASE ============ -->
+    <div class="modal" id="modal-fase">
+      <div class="placa">
+        <p class="placa-kicker" id="fasemodal-kicker"></p>
+        <h3 class="placa-titulo" id="fasemodal-titulo"></h3>
+        <p class="placa-bajada">Nueva tanda de conexiones</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="js/content.js"></script>
+<script src="js/game.js"></script>
+</body>
+</html>

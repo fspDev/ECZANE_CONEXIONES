@@ -1,0 +1,14 @@
+# Material de marca original del cliente: no lo usa la app y no
+# corresponde publicarlo. Los assets que la app si necesita estan
+# copiados en app/assets/.
+Instructivo-Marca-Eczane.pdf
+Logotipo/
+Tipografía/
+
+# Config local del entorno de desarrollo
+.claude/
+
+# Basura del SO
+Thumbs.db
+Desktop.ini
+.DS_Store
