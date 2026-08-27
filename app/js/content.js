@@ -23,7 +23,7 @@ const CONTENIDO = {
 
   /* ---------- Copies (tomados del brief) ---------- */
   copy: {
-    tituloInicio:    'Conexiones<br>que importan',
+    tituloInicio:    'Conexiones<br><em>que importan</em>',
     bajadaInicio:    'Descubrí las asociaciones correctas<br>y desbloqueá novedades.',
     aliado:          'Tu representante es tu aliado:<br>pueden resolverlo juntos.',
     botonInicio:     'Iniciar misión',

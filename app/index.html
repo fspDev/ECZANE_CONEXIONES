@@ -20,7 +20,7 @@
       <h1 class="titulo-obra" id="titulo-inicio"></h1>
       <p class="bajada" id="bajada-inicio"></p>
       <p class="aliado" id="aliado-inicio"></p>
-      <button class="boton" id="btn-iniciar"></button>
+      <button class="boton" id="btn-iniciar"><span class="rotulo"></span><svg class="flecha" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
     </section>
 
     <!-- ============ CUENTA REGRESIVA ============ -->
@@ -63,13 +63,20 @@
 
     <!-- ============ CIERRE ============ -->
     <section class="pantalla" id="pantalla-cierre">
-      <img class="logo logo--chico" src="assets/img/Logotipo-Eczane_color-compuesto.png" alt="Laboratorio Eczane">
-      <div class="marcador-final"><b id="cierre-num">0</b><span id="cierre-total">/12</span></div>
+      <p class="cierre-kicker" id="cierre-msg"></p>
+
+      <div class="cierre-marcador">
+        <b id="cierre-num">0</b><span id="cierre-total">/12</span>
+      </div>
       <p class="marcador-label">conexiones logradas</p>
-      <div class="placas-cierre" id="placas-cierre"></div>
-      <p class="cierre-msg" id="cierre-msg"></p>
+
+      <p class="cierre-seccion">
+        Novedades desbloqueadas <b id="cierre-nov-cuenta"></b>
+      </p>
+      <div class="novedades-cierre" id="novedades-cierre"></div>
+
       <p class="cierre-apoyo" id="cierre-apoyo"></p>
-      <button class="boton" id="btn-reiniciar"></button>
+      <button class="boton boton--cierre" id="btn-reiniciar"></button>
     </section>
 
     <!-- ============ MODAL: NOVEDAD DESBLOQUEADA ============ -->

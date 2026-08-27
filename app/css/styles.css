@@ -10,6 +10,7 @@
 @font-face { font-family:'DIN Pro'; src:url('../assets/fonts/DINPro-Black.otf')  format('opentype'); font-weight:900; font-display:swap; }
 @font-face { font-family:'DIN Pro Cond'; src:url('../assets/fonts/DINPro-CondMedium.otf') format('opentype'); font-weight:500; font-display:swap; }
 @font-face { font-family:'DIN Pro Cond'; src:url('../assets/fonts/DINPro-CondBold.otf')   format('opentype'); font-weight:700; font-display:swap; }
+@font-face { font-family:'DIN Pro Cond'; src:url('../assets/fonts/DINPro-CondBlack.otf')  format('opentype'); font-weight:900; font-display:swap; }
 @font-face { font-family:'Open Sans Eczane'; src:url('../assets/fonts/OpenSans-Regular.ttf')  format('truetype'); font-weight:400; font-display:swap; }
 @font-face { font-family:'Open Sans Eczane'; src:url('../assets/fonts/OpenSans-SemiBold.ttf') format('truetype'); font-weight:600; font-display:swap; }
 
@@ -90,13 +91,12 @@ html,body{
 #pantalla-inicio{ justify-content:center; text-align:center; }
 /* La separacion va en el elemento siguiente: el logo usa margenes
    negativos calculados por JS para descontar el transparente del PNG. */
-#pantalla-inicio .titulo-obra{ margin-top:120px; }
-
-.titulo-obra{
-  font-family:'DIN Pro',sans-serif; font-weight:900;
-  font-size:132px; line-height:.98; letter-spacing:-.02em;
-  color:var(--azul);
+#pantalla-inicio .titulo-obra{
+  font-family:'DIN Pro Cond',sans-serif; font-weight:900;
+  font-size:186px; line-height:.92; letter-spacing:-.008em;
+  color:var(--azul); text-transform:uppercase;
 }
+.titulo-obra em{ font-style:normal; color:var(--naranja); }
 
 .bajada{
   font-weight:600;
@@ -110,17 +110,32 @@ html,body{
 }
 
 .boton{
+  position:relative; z-index:1;
   font-family:'DIN Pro',sans-serif; font-weight:700;
-  font-size:44px; letter-spacing:.01em;
+  font-size:50px; letter-spacing:.01em;
   color:var(--blanco); background:var(--naranja);
   border:none; border-radius:999px;
-  padding:38px 96px; margin-top:96px;
-  cursor:pointer; box-shadow:0 10px 30px rgba(243,123,32,.35);
-  transition:transform .18s ease, box-shadow .18s ease;
-  animation:latir 2.6s ease-in-out infinite;
+  padding:42px 104px; margin-top:88px;
+  cursor:pointer;
+  display:inline-flex; align-items:center; gap:26px;
+  box-shadow:0 14px 38px rgba(243,123,32,.42);
+  transition:transform .16s ease, box-shadow .16s ease;
+  animation:flotar 2.8s ease-in-out infinite;
 }
-.boton:active{ transform:scale(.97); box-shadow:0 4px 14px rgba(243,123,32,.35); }
-@keyframes latir{ 0%,100%{ transform:scale(1);} 50%{ transform:scale(1.03);} }
+/* Halo que late hacia afuera: lee como "tocame" a 2 metros de distancia. */
+.boton::after{
+  content:''; position:absolute; inset:0; border-radius:999px; z-index:-1;
+  border:4px solid var(--naranja);
+  animation:halo 2.8s ease-out infinite;
+}
+.boton .flecha{ width:44px; height:44px; flex:none; }
+.boton:active{ transform:scale(.96); box-shadow:0 6px 18px rgba(243,123,32,.42); animation:none; }
+@keyframes flotar{ 0%,100%{ transform:translateY(0);} 50%{ transform:translateY(-10px);} }
+@keyframes halo{
+  0%{ transform:scale(1); opacity:.55; }
+  70%{ transform:scale(1.22); opacity:0; }
+  100%{ transform:scale(1.22); opacity:0; }
+}
 
 /* ---------- CUENTA REGRESIVA ---------- */
 #pantalla-cuenta{ justify-content:center; text-align:center; }
@@ -166,7 +181,7 @@ html,body{
 .tarjeton{
   position:relative; border-radius:var(--radio); border:3px solid var(--gris-30);
   background:var(--blanco); box-shadow:var(--sombra);
-  padding:30px; cursor:pointer; text-align:left;
+  padding:34px 30px; cursor:pointer; text-align:center;
   display:flex; flex-direction:column; justify-content:center;
   transition:transform .2s ease, border-color .2s ease, box-shadow .2s ease, background .2s ease, opacity .3s ease;
   overflow:hidden; font-family:inherit;
@@ -174,9 +189,10 @@ html,body{
 .tarjeton::before{ content:''; position:absolute; left:0; top:0; bottom:0; width:8px; background:var(--azul-30); transition:background .2s ease; }
 .tarjeton:active{ transform:scale(.985); }
 
-.tarjeton .texto{ font-size:26px; line-height:1.34; font-weight:600; color:var(--tinta); }
-.tarjeton--b .marca{ font-family:'DIN Pro Cond',sans-serif; font-weight:700; font-size:52px; line-height:1.02; color:var(--azul); }
-.tarjeton--b .molecula{ font-weight:400; font-size:25px; color:var(--gris); margin-top:10px; line-height:1.3; }
+.tarjeton{ align-items:center; }
+.tarjeton .texto{ font-size:32px; line-height:1.3; font-weight:600; color:var(--tinta); text-wrap:balance; }
+.tarjeton--b .marca{ font-family:'DIN Pro Cond',sans-serif; font-weight:900; font-size:58px; line-height:1.02; color:var(--azul); }
+.tarjeton--b .molecula{ font-weight:400; font-size:26px; color:var(--gris); margin-top:10px; line-height:1.3; }
 .tarjeton--b::before{ background:var(--naranja-30); }
 
 /* Estados */
@@ -194,18 +210,68 @@ html,body{
 
 .tarjeton.hecho{ opacity:.45; }
 
-/* ---------- Avisos flotantes ---------- */
+/* ---------- Avisos ----------
+   El acierto es el momento a celebrar: cartel grande, centrado sobre el
+   tablero, con tilde y estallido. El error es deliberadamente discreto
+   (el brief pide no penalizar): pastilla chica abajo. */
 .aviso{
-  position:absolute; left:50%; bottom:120px; transform:translateX(-50%);
-  background:var(--azul); color:var(--blanco); border-radius:44px;
-  padding:26px 60px; font-family:'DIN Pro',sans-serif; font-weight:700; font-size:38px;
-  box-shadow:var(--sombra-alta); opacity:0; pointer-events:none; z-index:20;
-  display:flex; flex-direction:column; align-items:center; gap:6px; text-align:center;
+  position:absolute; left:50%; z-index:20;
+  opacity:0; pointer-events:none;
+  display:flex; flex-direction:column; align-items:center; text-align:center;
 }
-.aviso small{ font-family:'Open Sans Eczane',sans-serif; font-weight:400; font-size:24px; opacity:.85; }
-.aviso.ver{ animation:avisoIn 1.5s ease both; }
-.aviso.naranja{ background:var(--naranja); }
-@keyframes avisoIn{ 0%{opacity:0; transform:translate(-50%,22px);} 18%{opacity:1; transform:translate(-50%,0);} 82%{opacity:1;} 100%{opacity:0; transform:translate(-50%,-14px);} }
+
+/* --- ACIERTO --- */
+.aviso--acierto{
+  top:50%; transform:translate(-50%,-50%);
+  background:var(--blanco); border:5px solid var(--naranja);
+  border-radius:44px; padding:52px 76px 46px; gap:10px;
+  box-shadow:0 26px 70px rgba(243,123,32,.34);
+  min-width:660px;
+}
+.aviso--acierto .tilde{
+  width:118px; height:118px; border-radius:50%; background:var(--naranja);
+  display:grid; place-items:center; margin-bottom:20px;
+}
+.aviso--acierto .tilde svg{ width:64px; height:64px; }
+.aviso--acierto b{ font-family:'DIN Pro Cond',sans-serif; font-weight:900;
+  font-size:76px; line-height:1; color:var(--naranja); text-transform:uppercase; letter-spacing:.01em; }
+.aviso--acierto small{ font-size:29px; font-weight:600; color:var(--gris); line-height:1.35; max-width:520px; }
+.aviso--acierto.ver{ animation:aciertoIn 1.5s cubic-bezier(.2,.9,.3,1) both; }
+
+/* Onda que se expande desde el cartel */
+.aviso--acierto::before{
+  content:''; position:absolute; inset:-6px; border-radius:48px;
+  border:5px solid var(--naranja); opacity:0;
+}
+.aviso--acierto.ver::before{ animation:ondaAcierto 1s ease-out both; }
+
+@keyframes aciertoIn{
+  0%{ opacity:0; transform:translate(-50%,-50%) scale(.72); }
+  16%{ opacity:1; transform:translate(-50%,-50%) scale(1.06); }
+  26%{ transform:translate(-50%,-50%) scale(1); }
+  80%{ opacity:1; transform:translate(-50%,-50%) scale(1); }
+  100%{ opacity:0; transform:translate(-50%,-58%) scale(.97); }
+}
+@keyframes ondaAcierto{
+  0%{ opacity:.75; transform:scale(1); }
+  100%{ opacity:0; transform:scale(1.3); }
+}
+
+/* --- ERROR --- */
+.aviso--error{
+  bottom:110px; transform:translateX(-50%);
+  background:var(--azul); color:var(--blanco); border-radius:44px;
+  padding:24px 56px; gap:5px; box-shadow:var(--sombra-alta);
+}
+.aviso--error b{ font-family:'DIN Pro',sans-serif; font-weight:700; font-size:36px; }
+.aviso--error small{ font-weight:400; font-size:23px; opacity:.85; }
+.aviso--error.ver{ animation:errorIn 1.3s ease both; }
+@keyframes errorIn{
+  0%{opacity:0; transform:translate(-50%,20px);}
+  18%{opacity:1; transform:translate(-50%,0);}
+  82%{opacity:1;}
+  100%{opacity:0; transform:translate(-50%,-12px);}
+}
 
 /* ---------- Modales ---------- */
 .modal{ position:absolute; inset:0; z-index:40; display:none; align-items:center; justify-content:center; padding:90px 72px;
@@ -233,31 +299,98 @@ html,body{
 #modal-fase .placa-titulo{ color:var(--blanco); font-size:104px; }
 #modal-fase .placa-bajada{ color:rgba(255,255,255,.85); }
 
-/* ---------- CIERRE ---------- */
-#pantalla-cierre{ justify-content:center; text-align:center; }
-#pantalla-cierre .marcador-final{ margin-top:48px; }
-.marcador-final{ font-family:'DIN Pro',sans-serif; font-weight:900; font-size:190px; line-height:1; color:var(--naranja); }
-.marcador-final span{ font-size:74px; color:var(--gris); }
-.marcador-label{ font-size:34px; font-weight:600; color:var(--azul); margin-top:8px; }
+/* ---------- CIERRE ----------
+   El cierre es el momento de cosecha: primero el logro (X/12), despues
+   las novedades que efectivamente descubrieron. Las que no llegaron a
+   desbloquear quedan atenuadas y con candado, para que se vea que
+   habia mas para encontrar. */
+#pantalla-cierre{ justify-content:center; text-align:center; padding:80px 64px; }
 
-.placas-cierre{ width:100%; display:grid; grid-template-columns:1fr 1fr; gap:28px; margin-top:56px; }
-.placa-qr{ background:var(--blanco); border:3px solid var(--gris-30); border-radius:var(--radio); padding:34px 26px; box-shadow:var(--sombra); }
-.placa-qr .qr{ width:210px; height:210px; margin:0 auto 22px; border-radius:16px; background:var(--gris-15); display:grid; place-items:center;
-  color:var(--gris); font-size:19px; font-weight:600; border:2px dashed var(--gris-30); overflow:hidden; }
-.placa-qr .qr img{ width:100%; height:100%; object-fit:contain; }
-.placa-qr h4{ font-family:'DIN Pro',sans-serif; font-weight:700; font-size:31px; color:var(--azul); line-height:1.15; }
-.placa-qr p{ font-size:23px; line-height:1.4; color:var(--gris); margin-top:12px; }
+.cierre-kicker{
+  font-family:'DIN Pro Cond',sans-serif; font-weight:900;
+  font-size:96px; line-height:1; color:var(--azul);
+  text-transform:uppercase; letter-spacing:.005em;
+  animation:entraCierre .6s cubic-bezier(.2,.9,.3,1) both;
+}
 
-.cierre-msg{ font-family:'DIN Pro',sans-serif; font-weight:700; font-size:52px; color:var(--azul); margin-top:52px; }
-.cierre-apoyo{ font-size:31px; line-height:1.45; color:var(--gris); margin-top:18px; }
-#pantalla-cierre .boton{ margin-top:48px; background:var(--azul); box-shadow:0 10px 30px rgba(0,84,128,.30); animation:none; font-size:36px; padding:30px 72px; }
+/* Marcador grande con anillo de celebracion */
+.cierre-marcador{
+  position:relative; margin-top:34px;
+  font-family:'DIN Pro',sans-serif; font-weight:900; line-height:1;
+  animation:entraCierre .6s cubic-bezier(.2,.9,.3,1) both .12s;
+}
+.cierre-marcador b{ font-size:236px; color:var(--naranja); }
+.cierre-marcador span{ font-size:96px; color:var(--gris); }
+.cierre-marcador::before{
+  content:''; position:absolute; left:50%; top:50%;
+  width:430px; height:430px; margin:-215px 0 0 -215px;
+  border-radius:50%; border:6px solid var(--naranja); opacity:0; z-index:-1;
+  animation:anilloCierre 1.4s ease-out .35s;
+}
+@keyframes anilloCierre{
+  0%{ opacity:.7; transform:scale(.55); }
+  100%{ opacity:0; transform:scale(1.08); }
+}
+@keyframes entraCierre{
+  from{ opacity:0; transform:translateY(26px) scale(.94); }
+  to{ opacity:1; transform:none; }
+}
 
-/* QR dentro de la placa de novedad */
-.placa-qr-caja{ width:260px; height:260px; margin:40px auto 0; border-radius:18px; background:var(--gris-15);
-  display:grid; place-items:center; color:var(--gris); font-size:22px; font-weight:600;
-  border:2px dashed var(--gris-30); overflow:hidden; }
-.placa-qr-caja img{ width:100%; height:100%; object-fit:contain; }
+.marcador-label{ font-size:34px; font-weight:600; color:var(--azul); margin-top:4px; }
 
-/* Boton "Sigamos" dentro de la placa de novedad */
-.boton--placa{ margin-top:52px; font-size:38px; padding:30px 84px; animation:none;
-  background:var(--naranja); box-shadow:0 10px 30px rgba(243,123,32,.35); }
+.cierre-seccion{
+  margin-top:58px; font-family:'DIN Pro Cond',sans-serif; font-weight:700;
+  font-size:30px; letter-spacing:.16em; text-transform:uppercase; color:var(--gris);
+  display:flex; align-items:center; justify-content:center; gap:14px;
+}
+.cierre-seccion b{
+  font-family:'DIN Pro',sans-serif; font-weight:700; font-size:28px;
+  letter-spacing:0; color:var(--blanco); background:var(--naranja);
+  border-radius:999px; padding:6px 18px;
+}
+
+/* Grilla de novedades: 2 x 2 */
+.novedades-cierre{
+  width:100%; margin-top:26px;
+  display:grid; grid-template-columns:1fr 1fr; gap:22px;
+}
+.nov-card{
+  position:relative; display:flex; flex-direction:column; align-items:center;
+  background:var(--blanco); border:3px solid var(--naranja-30);
+  border-radius:var(--radio); padding:28px 24px; box-shadow:var(--sombra);
+  animation:entraCierre .5s cubic-bezier(.2,.9,.3,1) both;
+}
+.nov-card:nth-child(1){ animation-delay:.30s; }
+.nov-card:nth-child(2){ animation-delay:.40s; }
+.nov-card:nth-child(3){ animation-delay:.50s; }
+.nov-card:nth-child(4){ animation-delay:.60s; }
+
+.nov-card .tilde-mini{
+  width:52px; height:52px; border-radius:50%; background:var(--naranja);
+  display:grid; place-items:center; margin-bottom:14px; flex:none;
+}
+.nov-card .tilde-mini svg{ width:28px; height:28px; }
+.nov-card h4{
+  font-family:'DIN Pro Cond',sans-serif; font-weight:900; font-size:34px;
+  line-height:1.1; color:var(--azul); text-transform:uppercase;
+}
+.nov-card p{ font-size:21px; line-height:1.35; color:var(--gris); margin-top:10px; }
+.nov-card .qr{
+  width:150px; height:150px; margin-top:16px; border-radius:12px;
+  background:var(--gris-15); display:grid; place-items:center; overflow:hidden;
+  color:var(--gris); font-size:17px; font-weight:600; border:2px dashed var(--gris-30);
+}
+.nov-card .qr img{ width:100%; height:100%; object-fit:contain; }
+
+/* No desbloqueada */
+.nov-card--trabada{ border-color:var(--gris-30); background:var(--gris-15); opacity:.55; }
+.nov-card--trabada .tilde-mini{ background:var(--gris-30); }
+.nov-card--trabada h4{ color:var(--gris); }
+
+.cierre-apoyo{ font-size:30px; line-height:1.45; color:var(--gris); margin-top:40px; }
+
+.boton--cierre{
+  margin-top:34px; background:var(--azul); box-shadow:0 12px 32px rgba(0,84,128,.30);
+  font-size:38px; padding:30px 76px;
+}
+.boton--cierre::after{ border-color:var(--azul); }

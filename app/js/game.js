@@ -260,17 +260,17 @@
 
   /* ---------- Aviso flotante ---------- */
   var avisoTO = null;
-  function aviso(titulo, apoyo, naranja) {
+  var TILDE = '<span class="tilde"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" ' +
+    'stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round">' +
+    '<path d="M20 6 9 17l-5-5"/></svg></span>';
+
+  function aviso(titulo, apoyo, esError) {
     var el = $('#aviso');
-    el.innerHTML = '';
-    el.appendChild(document.createTextNode(titulo));
-    if (apoyo) {
-      var s = document.createElement('small');
-      s.textContent = apoyo;
-      el.appendChild(s);
-    }
-    el.classList.toggle('naranja', !!naranja);
-    el.classList.remove('ver');
+    el.className = 'aviso ' + (esError ? 'aviso--error' : 'aviso--acierto');
+    el.innerHTML = (esError ? '' : TILDE) + '<b></b>' + (apoyo ? '<small></small>' : '');
+    el.querySelector('b').textContent = titulo;
+    if (apoyo) el.querySelector('small').textContent = apoyo;
+
     void el.offsetWidth;             // reinicia la animacion
     el.classList.add('ver');
     clearTimeout(avisoTO);
@@ -331,7 +331,50 @@
     });
   }
 
-  /* ---------- Cierre ---------- */
+  /* ---------- Cierre ----------
+     Se listan las 4 novedades: las desbloqueadas en color y con tilde,
+     las que no llegaron a descubrir atenuadas. Asi queda claro que
+     lograron y que se perdieron. Los QR siguen visibles en ambos casos:
+     son el unico camino a la web y no conviene esconderlos. */
+  var TILDE_MINI = '<span class="tilde-mini"><svg viewBox="0 0 24 24" fill="none" ' +
+    'stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round">' +
+    '<path d="M20 6 9 17l-5-5"/></svg></span>';
+  var CANDADO_MINI = '<span class="tilde-mini"><svg viewBox="0 0 24 24" fill="none" ' +
+    'stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">' +
+    '<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>';
+
+  function pintarNovedadesCierre() {
+    var cont = $('#novedades-cierre');
+    cont.innerHTML = '';
+
+    var claves = Object.keys(C.novedades);
+    var logradas = 0;
+
+    claves.forEach(function (k) {
+      var n = C.novedades[k];
+      var abierta = st.novedades.indexOf(k) !== -1;
+      if (abierta) logradas++;
+
+      var d = document.createElement('div');
+      d.className = 'nov-card' + (abierta ? '' : ' nov-card--trabada');
+      d.innerHTML = (abierta ? TILDE_MINI : CANDADO_MINI) +
+        '<h4></h4><p></p>' + (n.qr ? '<div class="qr"></div>' : '');
+      d.querySelector('h4').textContent = n.titulo;
+      d.querySelector('p').textContent = n.bajada;
+
+      if (n.qr) {
+        var caja = d.querySelector('.qr');
+        var im = new Image();
+        im.src = n.qr;
+        im.onerror = function () { caja.textContent = 'QR pendiente'; };
+        caja.appendChild(im);
+      }
+      cont.appendChild(d);
+    });
+
+    $('#cierre-nov-cuenta').textContent = logradas + ' de ' + claves.length;
+  }
+
   function cerrar() {
     detenerReloj();
     $('#modal-novedad').classList.remove('activo');
@@ -339,6 +382,7 @@
     $('#cierre-num').textContent = st.conexiones;
     $('#cierre-total').textContent = '/' + TOTAL;
     $('#cierre-msg').textContent = C.copy.cierre;
+    pintarNovedadesCierre();
     irA('cierre');
   }
 
@@ -379,7 +423,7 @@
     $('#titulo-inicio').innerHTML = C.copy.tituloInicio;
     $('#bajada-inicio').innerHTML = C.copy.bajadaInicio;
     $('#aliado-inicio').innerHTML = C.copy.aliado;
-    $('#btn-iniciar').textContent = C.copy.botonInicio;
+    $('#btn-iniciar .rotulo').textContent = C.copy.botonInicio;
     $('#cuenta-titulo').textContent = C.copy.cuentaRegresiva;
     $('#cuenta-sub').textContent = C.copy.tiempo;
     $('#instruccion').textContent = C.copy.instruccion;
@@ -387,23 +431,6 @@
     $('#btn-reiniciar').textContent = C.copy.botonReinicio;
     $('#btn-novedad').textContent = C.copy.botonNovedad;
 
-    var cont = $('#placas-cierre');
-    cont.innerHTML = '';
-    C.cierrePlacas.forEach(function (p) {
-      var d = document.createElement('div');
-      d.className = 'placa-qr';
-      d.innerHTML = '<div class="qr"></div><h4></h4><p></p>';
-      d.querySelector('h4').textContent = p.titulo;
-      d.querySelector('p').textContent = p.detalle;
-      var qr = d.querySelector('.qr');
-      if (p.qr) {
-        var im = new Image();
-        im.src = p.qr;
-        im.onerror = function () { qr.textContent = 'QR pendiente'; };
-        qr.appendChild(im);
-      } else { qr.textContent = 'QR pendiente'; }
-      cont.appendChild(d);
-    });
   }
 
   /* ---------- Ajuste optico de los logos ----------
@@ -468,6 +495,41 @@
     });
   }
 
+  /* Ajusta el cuerpo del titulo para que la linea mas larga entre a lo ancho.
+     "QUE IMPORTAN" es mas ancha que "CONEXIONES", asi que el limite lo pone
+     ella. Se recalcula solo si manana cambian el copy. */
+  function ajustarTitulo() {
+    var t = $('#titulo-inicio');
+    var disponible = t.offsetWidth;
+    if (!disponible) return;
+
+    var lineas = C.copy.tituloInicio.split(/<br\s*\/?>/i)
+      .map(function (l) { return l.replace(/<[^>]*>/g, '').trim(); })
+      .filter(Boolean);
+    if (!lineas.length) return;
+
+    t.style.fontSize = '';                       // vuelve al valor del CSS
+    var base = parseFloat(getComputedStyle(t).fontSize);
+    var cs = getComputedStyle(t);
+
+    var regla = document.createElement('span');
+    regla.style.cssText = 'position:absolute;left:-9999px;top:0;visibility:hidden;white-space:pre;' +
+      'text-transform:' + cs.textTransform + ';font-family:' + cs.fontFamily +
+      ';font-weight:' + cs.fontWeight + ';font-size:' + base + 'px;letter-spacing:' + cs.letterSpacing;
+    document.body.appendChild(regla);
+
+    var ancho = 0;
+    lineas.forEach(function (l) {
+      regla.textContent = l;
+      ancho = Math.max(ancho, regla.getBoundingClientRect().width);
+    });
+    regla.parentNode.removeChild(regla);
+
+    if (ancho > disponible) {
+      t.style.fontSize = Math.floor(base * (disponible / ancho) * 0.98) + 'px';
+    }
+  }
+
   // Ancho de la primera linea del titulo, con su tipografia real.
   // Se mide fuera de #stage para no arrastrar la escala del lienzo.
   function anchoPalabraTitulo() {
@@ -488,7 +550,9 @@
   }
 
   function ajustarLogos() {
-    calzarLogo($('#logo-inicio'), anchoPalabraTitulo());
+    ajustarTitulo();   // primero el titulo: el logo se mide contra el
+    // 55% del ancho del titulo: el protagonismo es del titulo, no del logo.
+    calzarLogo($('#logo-inicio'), anchoPalabraTitulo() * 0.55);
     [].forEach.call(document.querySelectorAll('.logo--chico'), function (l) {
       calzarLogo(l, 250);
     });

@@ -98,3 +98,22 @@ de tocar las 24 tarjetas consume ~12 s, y quedan ~48 s para leer 12 párrafos cl
 (4 s cada uno). El reloj se pausa en las 4 placas de novedad, así que leer las novedades
 no descuenta — pero conviene verlo con gente real antes del congreso. Si queda corto,
 se sube `config.duracionSegundos`.
+
+## Ajustes visuales pedidos por el cliente (ronda 1)
+
+- **Logo de inicio** al 55 % del ancho del título, para que el título mande.
+- **Título en DIN Pro Condensed Black**, en mayúsculas y a dos tintas (azul + naranja).
+  El cuerpo se autoajusta: se mide la línea más larga ("QUE IMPORTAN") y se baja el
+  tamaño hasta que entre. Si cambia el copy, se recalcula solo.
+- **Botón "Iniciar misión"**: más grande, con flecha, flotación suave y un halo que
+  late hacia afuera para que se lea como tocable desde lejos.
+- **"Conexión lograda"** pasó de una pastilla abajo a un cartel grande centrado sobre
+  el tablero, con tilde en círculo naranja y onda expansiva. El **error quedó
+  deliberadamente discreto** (pastilla azul abajo): el brief pide no penalizar.
+- **Tarjetones** con texto centrado en ambos ejes y más grande (26 → 32 px; los
+  nombres de producto 52 → 58 px en Condensed Black). Verificado que las 12 conexiones
+  entran sin desbordar.
+- **Cierre** rearmado: "MISIÓN COMPLETADA", marcador gigante con anillo de celebración
+  y una grilla 2×2 con **las 4 novedades**: las desbloqueadas en color y con tilde, las
+  que no llegaron a descubrir atenuadas y con candado. Los QR quedan visibles en ambos
+  casos, porque son el único camino a la web.
