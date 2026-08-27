@@ -89,14 +89,17 @@ html,body{
 
 /* ---------- INICIO ---------- */
 #pantalla-inicio{ justify-content:center; text-align:center; }
-/* La separacion va en el elemento siguiente: el logo usa margenes
-   negativos calculados por JS para descontar el transparente del PNG. */
-#pantalla-inicio .titulo-obra{
+.titulo-obra{
   font-family:'DIN Pro Cond',sans-serif; font-weight:900;
   font-size:186px; line-height:.92; letter-spacing:-.008em;
   color:var(--azul); text-transform:uppercase;
 }
 .titulo-obra em{ font-style:normal; color:var(--naranja); }
+
+/* Aire entre el logo y el titulo. Va en el titulo y no en el logo porque
+   el logo usa margenes negativos calculados por JS para descontar el
+   transparente del PNG, y ahi cualquier margin propio se pisa. */
+#pantalla-inicio .titulo-obra{ margin-top:170px; }
 
 .bajada{
   font-weight:600;
