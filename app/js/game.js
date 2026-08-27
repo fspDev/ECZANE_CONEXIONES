@@ -530,6 +530,66 @@
     }
   }
 
+  /* Centra opticamente el titulo en el hueco entre el logo y la bajada.
+     No alcanza con igualar margenes: la caja de texto lleva aire arriba
+     (ascendente) y abajo (descendente) que nadie ve, y el titulo va en
+     mayusculas, asi que sobra mas abajo que arriba. Se mide la TINTA real
+     con las metricas de la fuente y se reparten los huecos visibles. */
+  function centrarTitulo() {
+    var t = $('#titulo-inicio');
+    var bajada = $('#bajada-inicio');
+    if (!t || !bajada) return;
+
+    var ct = getComputedStyle(t);
+    var cb = getComputedStyle(bajada);
+    var cv = document.createElement('canvas').getContext('2d');
+
+    // Distancia desde el borde superior de una caja de texto hasta la
+    // tinta, y desde la tinta hasta el borde inferior.
+    function tinta(cs, texto, lineas) {
+      var fs = parseFloat(cs.fontSize);
+      var lh = cs.lineHeight === 'normal' ? fs * 1.2 : parseFloat(cs.lineHeight);
+      cv.font = cs.fontWeight + ' ' + fs + 'px ' + cs.fontFamily;
+
+      var mFuente = cv.measureText('Hg');
+      var asc = mFuente.fontBoundingBoxAscent;
+      var desc = mFuente.fontBoundingBoxDescent;
+      if (!asc || !desc) { asc = fs * 0.8; desc = fs * 0.2; }
+
+      var medioInterlineado = (lh - (asc + desc)) / 2;
+      var baseSuperior = medioInterlineado + asc;
+
+      var mPrimera = cv.measureText(lineas[0]);
+      var mUltima = cv.measureText(lineas[lineas.length - 1]);
+
+      return {
+        arriba: baseSuperior - (mPrimera.actualBoundingBoxAscent || asc),
+        alto: lh * lineas.length,
+        abajo: lh * lineas.length -
+               (baseSuperior + lh * (lineas.length - 1) + (mUltima.actualBoundingBoxDescent || 0))
+      };
+    }
+
+    function lineasDe(html, mayus) {
+      return html.split(/<br\s*\/?>/i)
+        .map(function (l) { return l.replace(/<[^>]*>/g, '').trim(); })
+        .filter(Boolean)
+        .map(function (l) { return mayus ? l.toUpperCase() : l; });
+    }
+
+    var tT = tinta(ct, null, lineasDe(C.copy.tituloInicio, ct.textTransform === 'uppercase'));
+    var tB = tinta(cb, null, lineasDe(C.copy.bajadaInicio, false));
+
+    // Se conserva el aire total y se reparte en partes iguales.
+    var mtActual = parseFloat(ct.marginTop) || 0;
+    var mbActual = parseFloat(cb.marginTop) || 0;
+    var huecoTotal = (mtActual + tT.arriba) + (tT.abajo + mbActual + tB.arriba);
+    var mitad = huecoTotal / 2;
+
+    t.style.marginTop = Math.round(mitad - tT.arriba) + 'px';
+    bajada.style.marginTop = Math.round(mitad - tT.abajo - tB.arriba) + 'px';
+  }
+
   // Ancho de la primera linea del titulo, con su tipografia real.
   // Se mide fuera de #stage para no arrastrar la escala del lienzo.
   function anchoPalabraTitulo() {
@@ -541,8 +601,9 @@
     var regla = document.createElement('span');
     regla.textContent = palabra;
     regla.style.cssText = 'position:absolute;left:-9999px;top:0;visibility:hidden;white-space:pre;' +
-      'font-family:' + cs.fontFamily + ';font-weight:' + cs.fontWeight +
-      ';font-size:' + cs.fontSize + ';letter-spacing:' + cs.letterSpacing;
+      'text-transform:' + cs.textTransform + ';font-family:' + cs.fontFamily +
+      ';font-weight:' + cs.fontWeight + ';font-size:' + cs.fontSize +
+      ';letter-spacing:' + cs.letterSpacing;
     document.body.appendChild(regla);
     var ancho = regla.getBoundingClientRect().width;
     regla.parentNode.removeChild(regla);
@@ -551,8 +612,10 @@
 
   function ajustarLogos() {
     ajustarTitulo();   // primero el titulo: el logo se mide contra el
-    // 55% del ancho del titulo: el protagonismo es del titulo, no del logo.
-    calzarLogo($('#logo-inicio'), anchoPalabraTitulo() * 0.55);
+    centrarTitulo();   // y despues se reparte el aire de arriba y abajo
+    // 54.6% del ancho visible de "CONEXIONES". El protagonismo es del
+    // titulo; este valor ya incluye el +10% que pidio el cliente.
+    calzarLogo($('#logo-inicio'), anchoPalabraTitulo() * 0.546);
     [].forEach.call(document.querySelectorAll('.logo--chico'), function (l) {
       calzarLogo(l, 250);
     });
