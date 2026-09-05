@@ -11,8 +11,20 @@
 @font-face { font-family:'DIN Pro Cond'; src:url('../assets/fonts/DINPro-CondMedium.otf') format('opentype'); font-weight:500; font-display:swap; }
 @font-face { font-family:'DIN Pro Cond'; src:url('../assets/fonts/DINPro-CondBold.otf')   format('opentype'); font-weight:700; font-display:swap; }
 @font-face { font-family:'DIN Pro Cond'; src:url('../assets/fonts/DINPro-CondBlack.otf')  format('opentype'); font-weight:900; font-display:swap; }
-@font-face { font-family:'Open Sans Eczane'; src:url('../assets/fonts/OpenSans-Regular.ttf')  format('truetype'); font-weight:400; font-display:swap; }
-@font-face { font-family:'Open Sans Eczane'; src:url('../assets/fonts/OpenSans-SemiBold.ttf') format('truetype'); font-weight:600; font-display:swap; }
+/* Open Sans VARIABLE (300-800 en un solo archivo, 48 KB).
+   El kit de marca solo trae Regular (400) y SemiBold (600) como archivos
+   sueltos: con esos dos, un <b> pedia 700+ y el navegador matcheaba el
+   SemiBold sin sintetizar negrita, asi que las palabras clave se veian
+   identicas al resto. Con la variable hay peso real hasta 800.
+   Open Sans es Apache 2.0, se puede redistribuir. */
+@font-face {
+  font-family:'Open Sans Eczane';
+  src:url('../assets/fonts/OpenSans-Variable.woff2') format('woff2-variations');
+  font-weight:300 800; font-display:swap;
+}
+/* Respaldo por si el woff2 no carga: los dos archivos del kit de marca. */
+@font-face { font-family:'Open Sans Kit'; src:url('../assets/fonts/OpenSans-Regular.ttf')  format('truetype'); font-weight:400; font-display:swap; }
+@font-face { font-family:'Open Sans Kit'; src:url('../assets/fonts/OpenSans-SemiBold.ttf') format('truetype'); font-weight:600; font-display:swap; }
 
 /* ---------- Paleta institucional ----------
    Naranja Pantone 166C - Azul Pantone 302C - Cool Gray 7C
@@ -42,7 +54,7 @@
 html,body{
   height:100%; width:100%;
   background:var(--gris-15);
-  font-family:'Open Sans Eczane',system-ui,sans-serif;
+  font-family:'Open Sans Eczane','Open Sans Kit',system-ui,sans-serif;
   color:var(--tinta);
   overflow:hidden;
   -webkit-tap-highlight-color:transparent;
@@ -191,7 +203,12 @@ html,body{
 .tarjeton:active{ transform:scale(.985); }
 
 .tarjeton{ align-items:center; }
-.tarjeton .texto{ font-size:32px; line-height:1.3; font-weight:600; color:var(--tinta); text-wrap:balance; }
+.tarjeton .texto{ font-size:32px; line-height:1.3; font-weight:400; color:var(--tinta); text-wrap:balance; }
+/* Palabra clave del disparador. Peso explicito, no se confia en como el
+   navegador resuelve <b>: con los dos archivos sueltos del kit de marca
+   (400 y 600) un <b> matcheaba el SemiBold y no se veia ninguna negrita.
+   Mismo color que el resto del texto, como en el mockup del cliente. */
+.tarjeton .texto b{ font-weight:800; }
 .tarjeton--b .marca{ font-family:'DIN Pro Cond',sans-serif; font-weight:900; font-size:58px; line-height:1.02; color:var(--azul); }
 .tarjeton--b .molecula{ font-weight:400; font-size:26px; color:var(--gris); margin-top:10px; line-height:1.3; }
 /* Esquema PCV es la unica tarjeta con el esquema de drogas como titulo

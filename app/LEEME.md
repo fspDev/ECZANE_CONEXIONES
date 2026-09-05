@@ -198,10 +198,9 @@ resolución.
    recorte del logo (, solo la marca gráfica) además
    de las dos versiones ya existentes.
 4. **Negrita de palabras clave:** confirmado contra el PDF que las 5
-   reescrituras tienen exactamente las palabras marcadas en negrita que
-   pidió el cliente. Ojo: el kit de marca no trae un    real, solo Regular y SemiBold — la negrita se resuelve con el
-   "bold sintético" del navegador (Chromium lo hace bien, pero si se
-   quiere más nitidez conviene pedir el archivo Bold real).
+   reescrituras tienen las palabras marcadas que pidió el cliente.
+   (El diagnóstico tipográfico de este punto era incorrecto — corregido
+   en la quinta ronda, ver abajo.)
 
 ### Sigue pendiente
 
@@ -268,3 +267,41 @@ El cliente volvió a mandar la referencia del PDF con más precisión:
    segunda línea debajo — apilado, no en fila. Se volvió a usar el
    recorte `eczagen-logo-solo.png` (el de icono+wordmark sin "by
    Eczane") en vez del ícono aislado.
+
+## Quinta ronda — la negrita no se veía (y por qué)
+
+El cliente reportó que las palabras clave seguían sin verse en negrita.
+Tenía razón, y el diagnóstico anterior ("Chromium lo resuelve con bold
+sintético") era **incorrecto**.
+
+**Causa real.** El kit de marca trae Open Sans en dos archivos sueltos:
+Regular (400) y SemiBold (600), declarados como dos `@font-face` con esos
+pesos. Cuando un `<b>` pedía 700 u 800, el algoritmo de font matching de
+Chrome elegía el archivo más cercano — el SemiBold 600 — y **no sintetiza
+negrita**, porque considera que 600 ya es "suficientemente pesado". El
+texto base también estaba en 600, así que la palabra clave renderizaba
+idéntica al resto.
+
+Medido en el navegador, el ancho del mismo texto por peso:
+
+| Peso | Antes | Después |
+|---|---|---|
+| 400 | 232,23 px | 231,55 px |
+| 600 | 239,72 px | 239,53 px |
+| 700 | 239,72 px | 247,45 px |
+| 800 | 239,72 px | 256,45 px |
+
+Antes, 600/700/800/900 daban todos exactamente el mismo ancho: prueba de
+que era un solo archivo para todos.
+
+**Solución.** Se agregó `OpenSans-Variable.woff2` (48 KB, un solo archivo
+que cubre 300–800 en un eje de peso continuo), declarado con
+`font-weight:300 800`. Open Sans es Apache 2.0, así que se puede
+redistribuir sin problema — a diferencia de las DIN Pro, que son
+comerciales. Los dos archivos del kit quedan como familia de respaldo
+(`'Open Sans Kit'`) por si el woff2 no cargara.
+
+El texto base de los tarjetones bajó de 600 a **400** y la palabra clave
+va en **800**, con el mismo color que el resto (como en el mockup del
+cliente). El contraste es grande y es peso tipográfico real, no un efecto
+simulado.
