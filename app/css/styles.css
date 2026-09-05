@@ -199,7 +199,9 @@ html,body{
 .tarjeton--b .marca--largo{ font-size:38px; line-height:1.18; }
 
 /* Logo de producto en vez de nombre en texto (ej. Eczagen) */
-.tarjeton--b .marca-logo{ max-width:78%; max-height:120px; object-fit:contain; }
+/* Icono + nombre conviviendo en la misma fila (ej. Eczagen) */
+.marca-fila{ display:flex; align-items:center; gap:16px; }
+.tarjeton--b .marca-icono{ width:52px; height:52px; flex:none; object-fit:contain; }
 .tarjeton--b::before{ background:var(--naranja-30); }
 
 /* Estados */

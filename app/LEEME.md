@@ -183,3 +183,58 @@ resolución.
   guarde como archivo (ej. en Descargas) y pase la ruta.
 - **QR de Mapa y Portal:** el cliente avisó que los genera en los próximos
   días. Mientras tanto la app muestra el placeholder "QR pendiente".
+
+## Segunda ronda de ajustes — 2026-09-05 (tarde)
+
+1. **Cierre:**  pasó a mostrar solo "Gracias por participar." —
+   se sacó "Sigamos el recorrido", que aparecía como segunda línea.
+2. **"QR pendiente" eliminado de toda la app.** Donde el QR todavía no
+   existe, la caja queda vacía (mantiene el espacio reservado, sin texto).
+   Se cambia en , en los dos  de las imágenes de QR.
+3. **Tarjetas de Eczagen: ícono + texto conviven.** Antes el logo
+   reemplazaba el texto "Eczagen"; ahora se ve el ícono (sin la
+   palabra "eczagen", que ya está como texto al lado) más el nombre en
+   la misma tipografía que el resto de las tarjetas. Se agregó un tercer
+   recorte del logo (, solo la marca gráfica) además
+   de las dos versiones ya existentes.
+4. **Negrita de palabras clave:** confirmado contra el PDF que las 5
+   reescrituras tienen exactamente las palabras marcadas en negrita que
+   pidió el cliente. Ojo: el kit de marca no trae un    real, solo Regular y SemiBold — la negrita se resuelve con el
+   "bold sintético" del navegador (Chromium lo hace bien, pero si se
+   quiere más nitidez conviene pedir el archivo Bold real).
+
+### Sigue pendiente
+
+- **Foto del estuche de Eczahedge.** El cliente la volvió a pegar directo
+  en el chat (dos veces). Se confirmó que no hay forma de tomar ese
+  archivo desde ahí — se buscó en las carpetas típicas de pegado de
+  Windows sin resultado. Falta que la guarde como archivo y la adjunte
+  o pase la ruta.
+
+## Segunda ronda de ajustes — 2026-09-05 (tarde)
+
+1. **Cierre:** `cierreApoyo` pasó a mostrar solo "Gracias por participar." —
+   se sacó "Sigamos el recorrido", que aparecía como segunda línea.
+2. **"QR pendiente" eliminado de toda la app.** Donde el QR todavía no
+   existe, la caja queda vacía (mantiene el espacio reservado, sin texto).
+   Se cambia en `js/game.js`, en los dos `onerror` de las imágenes de QR.
+3. **Tarjetas de Eczagen: ícono + texto conviven.** Antes el logo
+   reemplazaba el texto "Eczagen"; ahora se ve el ícono (sin la palabra
+   "eczagen", que ya está como texto al lado) más el nombre en la misma
+   tipografía que el resto de las tarjetas. Se agregó un tercer recorte
+   del logo (`eczagen-icono.png`, solo la marca gráfica) además de las
+   dos versiones ya existentes.
+4. **Negrita de palabras clave:** confirmado contra el PDF que las 5
+   reescrituras tienen exactamente las palabras marcadas en negrita que
+   pidió el cliente. Ojo: el kit de marca no trae un `OpenSans-Bold.ttf`
+   real, solo Regular y SemiBold — la negrita se resuelve con el
+   "bold sintético" del navegador (Chromium lo hace bien, pero si se
+   quiere más nitidez conviene pedir el archivo Bold real).
+
+### Sigue pendiente
+
+- **Foto del estuche de Eczahedge.** El cliente la volvió a pegar directo
+  en el chat (dos veces). Se confirmó que no hay forma de tomar ese
+  archivo desde ahí — se buscó en las carpetas típicas de pegado de
+  Windows sin resultado. Falta que la guarde como archivo y la adjunte
+  o pase la ruta.

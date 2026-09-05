@@ -47,7 +47,7 @@ const CONTENIDO = {
     error:           'Casi. Probemos otra conexión.',
     errorApoyo:      'Esa dupla no conecta, sigamos.',
     cierre:          'Misión completada',
-    cierreApoyo:     'Gracias por participar.<br>Sigamos el recorrido.',
+    cierreApoyo:     'Gracias por participar.',
     botonNovedad:    'Sigamos',
     botonReinicio:   'Nueva misión'
   },
@@ -129,7 +129,7 @@ const CONTENIDO = {
           disparador: 'Programa que ofrece perfil histo-molecular completo (OMS 2021) de <b>gliomas difusos</b> del adulto',
           solucion: 'Eczagen',
           solucionDetalle: '',
-          logoSolucion: 'assets/img/eczagen-logo-solo.png'
+          iconoSolucion: 'assets/img/eczagen-icono.png'
         }
       ]
     },
@@ -144,7 +144,7 @@ const CONTENIDO = {
           disparador: 'Programa de <b>diagnóstico</b> integrado en <b>gliomas difusos</b> del adulto',
           solucion: 'Eczagen',
           solucionDetalle: '',
-          logoSolucion: 'assets/img/eczagen-logo-solo.png'
+          iconoSolucion: 'assets/img/eczagen-icono.png'
         },
         {
           id: 'p2',

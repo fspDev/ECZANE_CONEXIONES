@@ -134,9 +134,12 @@
     var textoSolucion = par.solucion.replace(/<[^>]*>/g, '');
     // Nombres largos (ej. el esquema de drogas de PCV) entran mas chicos.
     var claseMarca = 'marca' + (textoSolucion.length > 28 ? ' marca--largo' : '');
-    var marca = par.logoSolucion
-      ? '<img class="marca-logo" src="' + par.logoSolucion + '" alt="' + textoSolucion + '">'
-      : '<div class="' + claseMarca + '">' + par.solucion + '</div>';
+    // El icono convive con el texto (no lo reemplaza) — pedido explicito
+    // del cliente para las tarjetas de Eczagen.
+    var icono = par.iconoSolucion
+      ? '<img class="marca-icono" src="' + par.iconoSolucion + '" alt="">' : '';
+    var marca = '<div class="marca-fila">' + icono +
+      '<div class="' + claseMarca + '">' + par.solucion + '</div></div>';
     b.innerHTML = marca + mol;
     b.addEventListener('click', function () { tocar(b); });
     return b;
@@ -305,7 +308,7 @@
       cajaQr.innerHTML = '';
       var im = new Image();
       im.src = n.qr;
-      im.onerror = function () { cajaQr.textContent = 'QR pendiente'; };
+      im.onerror = function () { im.remove(); }; // sin QR aun: la caja queda vacia, sin texto
       cajaQr.appendChild(im);
     } else {
       cajaQr.style.display = 'none';
@@ -373,7 +376,7 @@
         var caja = d.querySelector('.qr');
         var im = new Image();
         im.src = n.qr;
-        im.onerror = function () { caja.textContent = 'QR pendiente'; };
+        im.onerror = function () { im.remove(); }; // sin QR aun: la caja queda vacia, sin texto
         caja.appendChild(im);
       }
       cont.appendChild(d);
