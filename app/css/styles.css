@@ -21,9 +21,9 @@
   --naranja:#f37b20;
   --naranja-15:#fde8d8;
   --naranja-30:#fbd2b3;
-  --azul:#005480;
-  --azul-30:#b3ccd9;
-  --azul-15:#d9e6ec;
+  --azul:#0047bb;
+  --azul-30:#b3c8eb;
+  --azul-15:#d9e3f6;
   --gris:#909295;
   --gris-15:#eeeef0;
   --gris-30:#dedee0;
@@ -33,8 +33,8 @@
   --stage-w:1080px;
   --stage-h:1920px;
   --radio:24px;
-  --sombra:0 8px 32px rgba(0,84,128,.10);
-  --sombra-alta:0 18px 56px rgba(0,84,128,.18);
+  --sombra:0 8px 32px rgba(0,71,187,.10);
+  --sombra-alta:0 18px 56px rgba(0,71,187,.18);
 }
 
 *,*::before,*::after{ box-sizing:border-box; margin:0; padding:0; }
@@ -60,9 +60,7 @@ html,body{
   position:absolute; left:50%; top:50%; overflow:hidden;
   transform-origin:center center;
   transform:translate(-50%,-50%) scale(1);
-  background:
-    radial-gradient(120% 60% at 50% 0%, var(--azul-15) 0%, rgba(255,255,255,0) 62%),
-    var(--blanco);
+  background:var(--blanco);
   box-shadow:var(--sombra-alta);
 }
 
@@ -196,6 +194,12 @@ html,body{
 .tarjeton .texto{ font-size:32px; line-height:1.3; font-weight:600; color:var(--tinta); text-wrap:balance; }
 .tarjeton--b .marca{ font-family:'DIN Pro Cond',sans-serif; font-weight:900; font-size:58px; line-height:1.02; color:var(--azul); }
 .tarjeton--b .molecula{ font-weight:400; font-size:26px; color:var(--gris); margin-top:10px; line-height:1.3; }
+/* Esquema PCV es la unica tarjeta con el esquema de drogas como titulo
+   en vez del nombre comercial: ese texto es mas largo, entra mas chico. */
+.tarjeton--b .marca--largo{ font-size:38px; line-height:1.18; }
+
+/* Logo de producto en vez de nombre en texto (ej. Eczagen) */
+.tarjeton--b .marca-logo{ max-width:78%; max-height:120px; object-fit:contain; }
 .tarjeton--b::before{ background:var(--naranja-30); }
 
 /* Estados */
@@ -278,7 +282,7 @@ html,body{
 
 /* ---------- Modales ---------- */
 .modal{ position:absolute; inset:0; z-index:40; display:none; align-items:center; justify-content:center; padding:90px 72px;
-  background:rgba(0,84,128,.92); }
+  background:rgba(0,71,187,.92); }
 .modal.activo{ display:flex; animation:aparecer .35s ease both; }
 
 .placa{ width:100%; background:var(--blanco); border-radius:40px; padding:84px 72px; text-align:center; box-shadow:var(--sombra-alta);
@@ -393,7 +397,7 @@ html,body{
 .cierre-apoyo{ font-size:30px; line-height:1.45; color:var(--gris); margin-top:40px; }
 
 .boton--cierre{
-  margin-top:34px; background:var(--azul); box-shadow:0 12px 32px rgba(0,84,128,.30);
+  margin-top:34px; background:var(--azul); box-shadow:0 12px 32px rgba(0,71,187,.30);
   font-size:38px; padding:30px 76px;
 }
 .boton--cierre::after{ border-color:var(--azul); }

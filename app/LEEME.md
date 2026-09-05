@@ -117,3 +117,69 @@ se sube `config.duracionSegundos`.
   y una grilla 2×2 con **las 4 novedades**: las desbloqueadas en color y con tilde, las
   que no llegaron a descubrir atenuadas y con candado. Los QR quedan visibles en ambos
   casos, porque son el único camino a la web.
+
+## Ronda de revisión del cliente (V2) — 2026-09-05
+
+Aplicado sobre capturas anotadas del cliente (PDF `Juego interactivo V 2.pdf`).
+
+1. **Paleta:** el azul Eczane (#005480) se reemplazó por el **azul de Eczagen
+   (#0047bb)** en toda la app, y se sacó el degradé celeste del fondo — ahora
+   es blanco plano en todas las pantallas. Decisión del cliente: aplicar a
+   todo el juego, no solo a lo relacionado con Eczagen.
+2. **Intercambio de Fase 1 ⇄ Fase 4:** el contenido clínico se movió, pero la
+   novedad que se desbloquea quedó fija por posición — Fase 1 sigue
+   desbloqueando Eczahedge, Fase 4 sigue desbloqueando el Portal.
+3. **"Tanda" → "Fase"** en el rótulo del tablero y en los carteles de cambio
+   de pantalla.
+4. **5 disparadores clínicos reescritos** con estilo de siglas (OS/FPS/CCm),
+   tal como los dio el cliente en el PDF — más cortos que los del DOCX
+   original: los dos de la Fase 4 (Eczagen y Rezitix), los dos de la Fase 3
+   (Eczagen y Rezitix-GIST) y el de Rezitix en la Fase 1. Se marcaron en
+   negrita las palabras clave que el cliente indicó en cada uno.
+5. **Tarjeta "Esquema PCV" invertida:** ahora el esquema de drogas
+   ("Lomustina Eczane + Procarbazina Eczane + Vincristina") es el título
+   grande, y "(Esquema PCV)" quedó como subtítulo chico en itálica — al
+   revés de las otras 11 tarjetas B, que muestran el nombre comercial arriba.
+6. **Logo de Eczagen** en vez del texto "Eczagen": aparece en sus dos
+   tarjetones (Fase 3 y Fase 4) y en su placa de novedad. El archivo
+   original era un PDF vectorial; se rasterizó a PNG con fondo transparente
+   (ver nota técnica abajo).
+7. **Nombres largos en 2 líneas:** "Lenvatinib Eczane" y "Lomustina Eczane"
+   fuerzan el salto entre el nombre y "Eczane" (antes se achicaban para
+   entrar en una sola línea).
+8. **Casing:** 3 disparadores que estaban en Title Case pasaron a oración
+   normal (solo la primera letra), y "regorafenib" pasó a "Regorafenib" con
+   R mayúscula en las 3 tarjetas donde aparece.
+9. **Textos de placas:**
+   - Título corregido: "Mapa de Neurooncología Argentina" → **"Mapa
+     Argentino de Neurooncología"**.
+   - Mapa: "Mapa para buscar…" → "Mapa para **localizar**…"; se sacó el
+     texto bajo el QR ("Encontralo en nuestra web"), queda solo el espacio
+     para el código.
+   - Portal: bajada acortada a "Acceso a documentación útil para
+     profesionales de la salud y pacientes"; se sacó el texto bajo el QR
+     ("Regístrese en nuestro portal web").
+10. **Duración de los carteles de acierto/error** extendida: 1,4s → 2,2s
+    (acierto) y 0,9s → 1,8s (error). Son números de partida — el cliente
+    pidió "extender" sin dar una cifra exacta; se ajusta en `config`.
+
+### Nota técnica: cómo se rasterizó el logo de Eczagen
+
+El archivo que envió el cliente es un PDF vectorial. No hay conversor
+PDF→PNG instalado en esta máquina (`pdftoppm`/ImageMagick/Ghostscript
+ausentes), así que se resolvió con Chrome instalado: se armó una página
+HTML que carga el PDF con `pdf.js` y lo dibuja en un `<canvas>` a escala
+4x, Chrome headless la abre y el canvas sube su propio PNG a un servidor
+local (sin tainting, porque pdf.js dibuja vectores directo, no una imagen
+cross-origin). Después se recortó el aire y se hizo transparente el fondo
+blanco con `System.Drawing` desde PowerShell. Los scripts quedaron en
+`%TEMP%/claude/dx/raster/` por si hace falta re-rasterizar a otra
+resolución.
+
+### Pendiente para cerrar esta ronda
+
+- **Foto del estuche de Eczahedge:** el cliente la pegó directo en el chat,
+  no como archivo adjunto — no hay forma de tomarla desde ahí. Falta que la
+  guarde como archivo (ej. en Descargas) y pase la ruta.
+- **QR de Mapa y Portal:** el cliente avisó que los genera en los próximos
+  días. Mientras tanto la app muestra el placeholder "QR pendiente".

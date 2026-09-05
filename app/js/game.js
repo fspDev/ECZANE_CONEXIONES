@@ -111,13 +111,15 @@
     st.bloqueado = false;
   }
 
+  /* disparador/solucion/solucionDetalle admiten HTML simple (<b>, <em>,
+     <br>) definido en content.js para marcar palabras clave y forzar
+     saltos de linea — por eso se arman con innerHTML y no textContent. */
   function tarjetonA(par) {
     var b = document.createElement('button');
     b.className = 'tarjeton tarjeton--a';
     b.dataset.par = par.id;
     b.dataset.lado = 'a';
-    b.innerHTML = '<div class="texto"></div>';
-    b.querySelector('.texto').textContent = par.disparador;
+    b.innerHTML = '<div class="texto">' + par.disparador + '</div>';
     b.addEventListener('click', function () { tocar(b); });
     return b;
   }
@@ -129,8 +131,13 @@
     b.dataset.lado = 'b';
     var mol = par.solucionDetalle
       ? '<div class="molecula">' + par.solucionDetalle + '</div>' : '';
-    b.innerHTML = '<div class="marca"></div>' + mol;
-    b.querySelector('.marca').textContent = par.solucion;
+    var textoSolucion = par.solucion.replace(/<[^>]*>/g, '');
+    // Nombres largos (ej. el esquema de drogas de PCV) entran mas chicos.
+    var claseMarca = 'marca' + (textoSolucion.length > 28 ? ' marca--largo' : '');
+    var marca = par.logoSolucion
+      ? '<img class="marca-logo" src="' + par.logoSolucion + '" alt="' + textoSolucion + '">'
+      : '<div class="' + claseMarca + '">' + par.solucion + '</div>';
+    b.innerHTML = marca + mol;
     b.addEventListener('click', function () { tocar(b); });
     return b;
   }
