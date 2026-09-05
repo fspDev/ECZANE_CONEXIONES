@@ -134,12 +134,12 @@
     var textoSolucion = par.solucion.replace(/<[^>]*>/g, '');
     // Nombres largos (ej. el esquema de drogas de PCV) entran mas chicos.
     var claseMarca = 'marca' + (textoSolucion.length > 28 ? ' marca--largo' : '');
-    // El icono convive con el texto (no lo reemplaza) — pedido explicito
-    // del cliente para las tarjetas de Eczagen.
-    var icono = par.iconoSolucion
-      ? '<img class="marca-icono" src="' + par.iconoSolucion + '" alt="">' : '';
-    var marca = '<div class="marca-fila">' + icono +
-      '<div class="' + claseMarca + '">' + par.solucion + '</div></div>';
+    // El logo completo va arriba y el nombre en texto abajo — pedido
+    // explicito del cliente para las tarjetas de Eczagen.
+    var marca = par.logoSolucion
+      ? '<img class="marca-logo-completo" src="' + par.logoSolucion + '" alt="">' +
+        '<div class="' + claseMarca + '">' + par.solucion + '</div>'
+      : '<div class="' + claseMarca + '">' + par.solucion + '</div>';
     b.innerHTML = marca + mol;
     b.addEventListener('click', function () { tocar(b); });
     return b;

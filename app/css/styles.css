@@ -195,13 +195,14 @@ html,body{
 .tarjeton--b .marca{ font-family:'DIN Pro Cond',sans-serif; font-weight:900; font-size:58px; line-height:1.02; color:var(--azul); }
 .tarjeton--b .molecula{ font-weight:400; font-size:26px; color:var(--gris); margin-top:10px; line-height:1.3; }
 /* Esquema PCV es la unica tarjeta con el esquema de drogas como titulo
-   en vez del nombre comercial: ese texto es mas largo, entra mas chico. */
-.tarjeton--b .marca--largo{ font-size:38px; line-height:1.18; }
+   en vez del nombre comercial: ese texto es mas largo y va con negrita
+   parcial (el esquema pesado, "Vincristina" mas liviano) — pedido del
+   cliente, imita el mockup exacto en vez de la uniformidad del resto. */
+.tarjeton--b .marca--largo{ font-size:38px; line-height:1.18; font-weight:700; }
+.tarjeton--b .marca--largo b{ font-weight:900; }
 
-/* Logo de producto en vez de nombre en texto (ej. Eczagen) */
-/* Icono + nombre conviviendo en la misma fila (ej. Eczagen) */
-.marca-fila{ display:flex; align-items:center; gap:16px; }
-.tarjeton--b .marca-icono{ width:52px; height:52px; flex:none; object-fit:contain; }
+/* Logo completo arriba, nombre en texto abajo (ej. Eczagen) */
+.tarjeton--b .marca-logo-completo{ max-width:74%; max-height:96px; object-fit:contain; margin-bottom:10px; }
 .tarjeton--b::before{ background:var(--naranja-30); }
 
 /* Estados */

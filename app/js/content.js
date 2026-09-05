@@ -129,7 +129,7 @@ const CONTENIDO = {
           disparador: 'Programa que ofrece perfil histo-molecular completo (OMS 2021) de <b>gliomas difusos</b> del adulto',
           solucion: 'Eczagen',
           solucionDetalle: '',
-          iconoSolucion: 'assets/img/eczagen-icono.png'
+          logoSolucion: 'assets/img/eczagen-logo-solo.png'
         }
       ]
     },
@@ -144,7 +144,7 @@ const CONTENIDO = {
           disparador: 'Programa de <b>diagnóstico</b> integrado en <b>gliomas difusos</b> del adulto',
           solucion: 'Eczagen',
           solucionDetalle: '',
-          iconoSolucion: 'assets/img/eczagen-icono.png'
+          logoSolucion: 'assets/img/eczagen-logo-solo.png'
         },
         {
           id: 'p2',
@@ -158,7 +158,7 @@ const CONTENIDO = {
           // subtitulo chico en italica — pedido del cliente, invierte el
           // orden habitual (nombre comercial arriba, droga abajo).
           disparador: 'En pacientes con glioma difuso de bajo grado y alto riesgo, demostró más de 14 años de mediana de sobrevida global vs RT sola.',
-          solucion: 'Lomustina Eczane + Procarbazina Eczane + Vincristina',
+          solucion: '<b>Lomustina Eczane + Procarbazina Eczane +</b> Vincristina',
           solucionDetalle: '<em>(Esquema PCV)</em>'
         }
       ]

@@ -249,3 +249,22 @@ resolución.
   De paso se subió el `max-height` de `.placa-img` (420px → 640px): una
   foto de producto real se beneficia de más presencia que la que tenía
   el espacio pensado para un placeholder.
+
+## Cuarta ronda de ajustes — 2026-09-05
+
+El cliente volvió a mandar la referencia del PDF con más precisión:
+
+1. **Tarjeta "Esquema PCV": negrita parcial restaurada.** En la ronda
+   anterior había dejado el título completo con un solo peso, por
+   consistencia con las otras 11 tarjetas. El cliente insistió mostrando
+   la captura de nuevo: quiere el mockup tal cual, con "Lomustina Eczane +
+   Procarbazina Eczane +" en negro pesado (900) y "Vincristina" más
+   liviano (700) — misma línea, dos pesos. Implementado con `<b>` sobre
+   el fragmento y una base más liviana en `.marca--largo`.
+2. **Tarjetas de Eczagen: logo completo arriba, texto abajo.** La ronda
+   anterior había puesto el ícono solo (sin wordmark) al lado del texto,
+   en la misma línea. El cliente aclaró que quiere el logo completo
+   (ícono + wordmark "eczagen") arriba, y el texto "Eczagen" como
+   segunda línea debajo — apilado, no en fila. Se volvió a usar el
+   recorte `eczagen-logo-solo.png` (el de icono+wordmark sin "by
+   Eczane") en vez del ícono aislado.
