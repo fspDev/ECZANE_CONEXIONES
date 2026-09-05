@@ -300,7 +300,7 @@ html,body{
 .placa-titulo{ font-family:'DIN Pro',sans-serif; font-weight:900; font-size:82px; line-height:1.12; color:var(--azul); margin-top:18px; }
 .placa-bajada{ font-size:36px; line-height:1.4; font-weight:600; margin-top:28px; color:var(--tinta); }
 .placa-detalle{ font-size:29px; line-height:1.5; color:var(--gris); margin-top:22px; }
-.placa-img{ max-width:100%; max-height:420px; margin-top:40px; border-radius:20px; }
+.placa-img{ max-width:82%; max-height:640px; margin-top:36px; border-radius:20px; }
 
 /* Cartel de fase */
 #modal-fase .placa{ background:transparent; box-shadow:none; }

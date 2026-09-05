@@ -173,7 +173,7 @@ const CONTENIDO = {
       titulo: 'ECZAHEDGE',
       bajada: 'Primera línea en cáncer basocelular localmente avanzado y metastásico',
       detalle: 'Eficacia de simple administración',
-      imagen: 'assets/img/eczahedge-estuches.png',   // PENDIENTE: falta el archivo (ver LEEME)
+      imagen: 'assets/img/eczahedge-estuches.jpg',
       qr: null
     },
     eczagen: {

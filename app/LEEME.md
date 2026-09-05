@@ -205,11 +205,13 @@ resolución.
 
 ### Sigue pendiente
 
-- **Foto del estuche de Eczahedge.** El cliente la volvió a pegar directo
-  en el chat (dos veces). Se confirmó que no hay forma de tomar ese
-  archivo desde ahí — se buscó en las carpetas típicas de pegado de
-  Windows sin resultado. Falta que la guarde como archivo y la adjunte
-  o pase la ruta.
+- ~~Foto del estuche de Eczahedge~~ — resuelto: el cliente la adjuntó como
+  archivo (`eczahedge familia.png`). Se recortó el aire transparente, se
+  achicó a 980x1100 y se aplanó sobre blanco como JPEG calidad 88
+  (1,47 MB → 121 KB): la placa siempre tiene fondo blanco, así que la
+  transparencia no aportaba nada y sí pesaba. De paso se subió el
+  `max-height` de `.placa-img` (420px → 640px) para que una foto de
+  producto real tenga la presencia que un placeholder no necesitaba.
 
 ## Segunda ronda de ajustes — 2026-09-05 (tarde)
 
@@ -233,8 +235,17 @@ resolución.
 
 ### Sigue pendiente
 
-- **Foto del estuche de Eczahedge.** El cliente la volvió a pegar directo
-  en el chat (dos veces). Se confirmó que no hay forma de tomar ese
-  archivo desde ahí — se buscó en las carpetas típicas de pegado de
-  Windows sin resultado. Falta que la guarde como archivo y la adjunte
-  o pase la ruta.
+- ~~Foto del estuche de Eczahedge~~ — **resuelto** (ver más abajo, tercera
+  ronda de ajustes).
+- QR de Mapa y Portal — el cliente los genera en los próximos días.
+
+## Tercera ronda de ajustes — 2026-09-05
+
+- **Foto del estuche de Eczahedge.** El cliente la adjuntó como archivo
+  (`eczahedge familia.png`, 2120×2788, fondo transparente). Se recortó el
+  aire transparente sobrante, se achicó a 980×1100 y se aplanó sobre
+  blanco como JPEG calidad 88 — la placa siempre tiene fondo blanco, así
+  que la transparencia no aportaba nada y sí pesaba (1,47 MB → 121 KB).
+  De paso se subió el `max-height` de `.placa-img` (420px → 640px): una
+  foto de producto real se beneficia de más presencia que la que tenía
+  el espacio pensado para un placeholder.
