@@ -166,52 +166,40 @@ const CONTENIDO = {
   ],
 
   /* ---------- Placas de "Novedad desbloqueada" ----------
-     Las 4 del DOCX, en el orden del esquema del cliente.
-     Pueden llevar imagen (foto de producto / logo) o qr. */
+     El ORDEN de estas claves es el que usa la grilla del cierre.
+
+     Campos:
+       titulo        texto del titulo (admite <br> para forzar el corte)
+       bajada        bajada
+       detalle       linea de apoyo, opcional
+       imagen        foto de producto, va DEBAJO de los textos
+       logoMarca     logo que reemplaza al titulo y va ARRIBA de los
+                     textos (placa de marca en vez de placa de producto)
+       logoCierre    logo que reemplaza al titulo en la grilla del cierre */
   novedades: {
     eczahedge: {
       titulo: 'ECZAHEDGE',
       bajada: 'Primera línea en cáncer basocelular localmente avanzado y metastásico',
       detalle: 'Eficacia de simple administración',
-      imagen: 'assets/img/eczahedge-estuches.jpg',
-      qr: null
-    },
-    eczagen: {
-      titulo: 'ECZAGEN',
-      bajada: 'Programa de diagnóstico de precisión en gliomas difusos del adulto',
-      detalle: 'Una brújula molecular hacia un diagnóstico certero, rápido y confiable.',
-      imagen: 'assets/img/eczagen-logo.png',
-      qr: null
+      imagen: 'assets/img/eczahedge-estuches.jpg'
     },
     mapa: {
-      titulo: 'MAPA ARGENTINO DE NEUROONCOLOGÍA',
+      titulo: 'MAPA ARGENTINO DE<br>NEUROONCOLOGÍA',
       bajada: 'Mapa para localizar especialistas, instituciones y servicios vinculados a la atención neurooncológica',
-      detalle: '',
-      imagen: null,
-      qr: 'assets/img/qr-mapa.png'                   // PENDIENTE: QR mapa
+      detalle: ''
     },
     portal: {
-      titulo: 'WEB ECZANE PORTAL MÉDICOS',
+      titulo: 'WEB ECZANE<br>PORTAL MÉDICO',
       bajada: 'Acceso a documentación útil para profesionales de la salud y pacientes',
-      detalle: '',
-      imagen: null,
-      qr: 'assets/img/qr-portal.png'                 // PENDIENTE: QR web
-    }
-  },
-
-  /* ---------- Placas con QR: se repiten en el cierre ----------
-     Recordatorio final, por si no llegaron a escanear durante el juego.
-     Dejar el array vacio ([]) para que el cierre muestre solo el resumen. */
-  cierrePlacas: [
-    {
-      titulo: 'Mapa Argentino de Neurooncología',
-      detalle: 'Especialistas, instituciones y servicios de atención neurooncológica.',
-      qr: 'assets/img/qr-mapa.png'                    // PENDIENTE: QR mapa
+      detalle: ''
     },
-    {
-      titulo: 'Portal Médicos Eczane',
-      detalle: 'Acceso a documentación útil para profesionales de la salud y pacientes.',
-      qr: 'assets/img/qr-portal.png'                  // PENDIENTE: QR web
+    eczagen: {
+      // Placa de marca: el isologotipo hace de titulo y va arriba.
+      titulo: 'Eczagen',
+      logoMarca: 'assets/img/eczagen-logo-solo.png',
+      logoCierre: 'assets/img/eczagen-isologo-horizontal.png',
+      bajada: 'Programa de diagnóstico de precisión en gliomas difusos del adulto',
+      detalle: 'Una brújula molecular hacia un diagnóstico certero, rápido y confiable.'
     }
-  ]
+  }
 };

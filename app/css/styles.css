@@ -218,8 +218,10 @@ html,body{
 .tarjeton--b .marca--largo{ font-size:38px; line-height:1.18; font-weight:700; }
 .tarjeton--b .marca--largo b{ font-weight:900; }
 
-/* Logo completo arriba, nombre en texto abajo (ej. Eczagen) */
-.tarjeton--b .marca-logo-completo{ max-width:74%; max-height:96px; object-fit:contain; margin-bottom:10px; }
+/* Isologotipo en lugar del nombre en texto (ej. Eczagen). Ocupa un poco
+   mas que antes: al sacarle el texto de abajo, la tarjeta quedaba floja
+   frente a las vecinas, que llenan el ancho con el nombre a 58px. */
+.tarjeton--b .marca-logo-completo{ max-width:78%; max-height:140px; object-fit:contain; }
 .tarjeton--b::before{ background:var(--naranja-30); }
 
 /* Estados */
@@ -318,7 +320,19 @@ html,body{
 .placa-titulo{ font-family:'DIN Pro',sans-serif; font-weight:900; font-size:82px; line-height:1.12; color:var(--azul); margin-top:18px; }
 .placa-bajada{ font-size:36px; line-height:1.4; font-weight:600; margin-top:28px; color:var(--tinta); }
 .placa-detalle{ font-size:29px; line-height:1.5; color:var(--gris); margin-top:22px; }
-.placa-img{ max-width:82%; max-height:640px; margin-top:36px; border-radius:20px; }
+/* Mas aire arriba y abajo de la foto de producto, y foto mas chica para
+   ganarlo sin estirar la placa (pedido del cliente sobre Eczahedge). */
+.placa-img{ max-width:66%; max-height:470px; margin:70px 0 66px; border-radius:20px; }
+
+/* --- Placa de MARCA: el isologotipo hace de titulo ---
+   No hace falta reordenar: en el HTML el logo ya viene despues del
+   kicker y antes de los textos, que es donde tiene que ir. */
+.placa-logo{ display:none; }
+.placa--marca .placa-logo{
+  display:inline-block; max-width:66%; max-height:290px;
+  object-fit:contain; margin:30px 0 10px;
+}
+.placa--marca .placa-titulo{ display:none; }
 
 /* Cartel de fase */
 #modal-fase .placa{ background:transparent; box-shadow:none; }
@@ -402,12 +416,10 @@ html,body{
   line-height:1.1; color:var(--azul); text-transform:uppercase;
 }
 .nov-card p{ font-size:21px; line-height:1.35; color:var(--gris); margin-top:10px; }
-.nov-card .qr{
-  width:150px; height:150px; margin-top:16px; border-radius:12px;
-  background:var(--gris-15); display:grid; place-items:center; overflow:hidden;
-  color:var(--gris); font-size:17px; font-weight:600; border:2px dashed var(--gris-30);
-}
-.nov-card .qr img{ width:100%; height:100%; object-fit:contain; }
+/* Eczagen usa su isologotipo horizontal en lugar del titulo en texto.
+   La altura se iguala a la de un titulo de dos lineas para que las
+   cuatro tarjetas arranquen la bajada a la misma altura. */
+.nov-card-logo{ max-width:88%; max-height:76px; object-fit:contain; }
 
 /* No desbloqueada */
 .nov-card--trabada{ border-color:var(--gris-30); background:var(--gris-15); opacity:.55; }

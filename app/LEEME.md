@@ -305,3 +305,50 @@ El texto base de los tarjetones bajó de 600 a **400** y la palabra clave
 va en **800**, con el mismo color que el resto (como en el mockup del
 cliente). El contraste es grande y es peso tipográfico real, no un efecto
 simulado.
+
+## Sexta ronda — "Devolución dinámica interactiva" (2026-09-08)
+
+1. **Placa de Eczahedge:** más aire arriba y abajo de la foto. Se logró
+   achicando la foto (82% → 66% de ancho, 640px → 470px de alto) en vez
+   de estirar la placa, como pidió el cliente.
+2. **Placa de Eczagen → placa de MARCA.** Se saca el título en texto
+   ("ECZAGEN") y el isologotipo pasa **arriba** de los textos. El logo
+   usado es el que no lleva "by Eczane". El resto de las placas siguen
+   siendo placas de producto (título en texto, foto abajo): la diferencia
+   es intencional y la marca la clase `.placa--marca`.
+3. **Tarjetones de Eczagen (fases 3 y 4):** solo el isologotipo, sin el
+   texto "Eczagen" debajo. El nombre ya está dibujado dentro de la marca.
+   El `alt` de la imagen conserva "Eczagen".
+4. **Título de la placa del Mapa en dos líneas:** `MAPA ARGENTINO DE` /
+   `NEUROONCOLOGÍA`. El `<br>` fija dónde cortar, pero "MAPA ARGENTINO
+   DE" no entraba a 82px y se partía igual, así que se agregó
+   `ajustarTituloPlaca()`: mide la línea más larga y baja el cuerpo hasta
+   que entre (quedó en 78px). Si mañana cambia el copy, se recalcula solo.
+5. **"Médicos" → "Médico"** en la placa del Portal y en el cierre.
+6. **Cierre:** nuevo orden de la grilla — **Eczahedge · Mapa · Portal ·
+   Eczagen** — y la tarjeta de Eczagen usa el **isologotipo horizontal**
+   en lugar del título en texto. El orden sale del orden de las claves de
+   `novedades` en content.js, así que se cambia moviendo bloques.
+7. **QR eliminados de toda la app.** Ya no se reserva espacio: se fueron
+   los campos `qr`, las cajas en las placas y en las tarjetas del cierre,
+   y el CSS asociado. También se borró `cierrePlacas`, que era código
+   muerto desde que se rearmó el cierre.
+8. **Logo de Eczane:** el cliente mandó `eczane-logo_color.png`, el mismo
+   lockup que ya usaba el HUD pero mucho mejor recortado (3000×1417 en vez
+   de 4500×4500 con relleno transparente). Reemplaza a
+   `Logotipo-Eczane_color-simple.png`. La pantalla de inicio sigue usando
+   la versión "compuesta" **con** el claim "Excelencia al cuidado de la
+   vida", que el archivo nuevo no trae.
+
+### Nuevos assets
+
+- `eczagen-isologo-horizontal.png` — rasterizado del PDF vectorial que
+  mandó el cliente (página 1, azul sobre blanco), recortado a su tinta y
+  con fondo transparente. El PDF trae además una versión en negativo
+  (blanco sobre azul) por si alguna vez se necesita sobre fondo oscuro.
+
+### Decisión propia, avisada
+
+Al sacarle el texto al tarjetón de Eczagen, el logo quedaba chico frente a
+las tarjetas vecinas (que llenan el ancho con el nombre a 58px), así que se
+subió de 96px a 140px de alto. Es un ajuste óptico, no lo pidió el cliente.

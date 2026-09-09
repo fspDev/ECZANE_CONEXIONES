@@ -134,11 +134,11 @@
     var textoSolucion = par.solucion.replace(/<[^>]*>/g, '');
     // Nombres largos (ej. el esquema de drogas de PCV) entran mas chicos.
     var claseMarca = 'marca' + (textoSolucion.length > 28 ? ' marca--largo' : '');
-    // El logo completo va arriba y el nombre en texto abajo — pedido
-    // explicito del cliente para las tarjetas de Eczagen.
+    // Con logo se muestra SOLO el isologotipo: el nombre ya esta dibujado
+    // dentro de la marca, repetirlo en texto era redundante.
     var marca = par.logoSolucion
-      ? '<img class="marca-logo-completo" src="' + par.logoSolucion + '" alt="">' +
-        '<div class="' + claseMarca + '">' + par.solucion + '</div>'
+      ? '<img class="marca-logo-completo" src="' + par.logoSolucion +
+        '" alt="' + textoSolucion + '">'
       : '<div class="' + claseMarca + '">' + par.solucion + '</div>';
     b.innerHTML = marca + mol;
     b.addEventListener('click', function () { tocar(b); });
@@ -287,36 +287,71 @@
     avisoTO = setTimeout(function () { el.classList.remove('ver'); }, 1600);
   }
 
+  /* Baja el cuerpo del titulo de la placa hasta que la linea mas larga
+     entre a lo ancho. El <br> del contenido fija DONDE cortar; esto se
+     encarga de que ese corte se respete y no se parta en mas lineas.
+     (Ej.: "MAPA ARGENTINO DE" no entraba a 82px y caia en 3 renglones.) */
+  function ajustarTituloPlaca() {
+    var t = $('#nov-titulo');
+    t.style.fontSize = '';
+    var disponible = t.offsetWidth;
+    if (!disponible) return;
+
+    var lineas = t.innerHTML.split(/<br\s*\/?>/i)
+      .map(function (l) { return l.replace(/<[^>]*>/g, '').trim(); })
+      .filter(Boolean);
+    if (lineas.length < 2) return;   // una sola linea: que envuelva sola
+
+    var cs = getComputedStyle(t);
+    var base = parseFloat(cs.fontSize);
+    var regla = document.createElement('span');
+    regla.style.cssText = 'position:absolute;left:-9999px;top:0;visibility:hidden;white-space:pre;' +
+      'text-transform:' + cs.textTransform + ';font-family:' + cs.fontFamily +
+      ';font-weight:' + cs.fontWeight + ';font-size:' + base + 'px;letter-spacing:' + cs.letterSpacing;
+    document.body.appendChild(regla);
+
+    var ancho = 0;
+    lineas.forEach(function (l) {
+      regla.textContent = l;
+      ancho = Math.max(ancho, regla.getBoundingClientRect().width);
+    });
+    regla.parentNode.removeChild(regla);
+
+    if (ancho > disponible) {
+      t.style.fontSize = Math.floor(base * (disponible / ancho) * 0.98) + 'px';
+    }
+  }
+
   /* ---------- Modal de novedad ---------- */
   function mostrarNovedad(id, luego) {
     var n = C.novedades[id];
     st.novedades.push(id);
 
     $('#nov-kicker').textContent = C.copy.desbloqueo;
-    $('#nov-titulo').textContent = n.titulo;
+    // El titulo admite <br> para forzar el corte de linea (ej. el Mapa).
+    $('#nov-titulo').innerHTML = n.titulo;
     $('#nov-bajada').textContent = n.bajada;
     $('#nov-detalle').textContent = n.detalle || '';
+
+    /* Dos tipos de placa:
+       - producto: titulo en texto + textos + foto abajo (Eczahedge)
+       - marca:    isologotipo arriba, sin titulo en texto (Eczagen) */
+    var logo = $('#nov-logo');
+    // La clase decide si el logo se ve: no se toca style.display para no
+    // pisar la regla del CSS que lo mantiene oculto por defecto.
+    $('#modal-novedad .placa').classList.toggle('placa--marca', !!n.logoMarca);
+    if (n.logoMarca) { logo.src = n.logoMarca; logo.alt = n.titulo; }
+    else { logo.removeAttribute('src'); }
 
     var img = $('#nov-img');
     if (n.imagen) { img.src = n.imagen; img.style.display = ''; }
     else { img.removeAttribute('src'); img.style.display = 'none'; }
     img.onerror = function () { img.style.display = 'none'; };
 
-    var cajaQr = $('#nov-qr');
-    if (n.qr) {
-      cajaQr.style.display = '';
-      cajaQr.innerHTML = '';
-      var im = new Image();
-      im.src = n.qr;
-      im.onerror = function () { im.remove(); }; // sin QR aun: la caja queda vacia, sin texto
-      cajaQr.appendChild(im);
-    } else {
-      cajaQr.style.display = 'none';
-    }
-
     // La placa queda en pantalla hasta que toquen "Sigamos".
     // Mientras tanto el reloj se detiene: leerla no gasta los 60 segundos.
     $('#modal-novedad').classList.add('activo');
+    ajustarTituloPlaca();   // recien ahora la placa tiene ancho medible
     if (cfg.pausarEnModales) st.pausado = true;
 
     var btn = $('#btn-novedad');
@@ -344,8 +379,8 @@
   /* ---------- Cierre ----------
      Se listan las 4 novedades: las desbloqueadas en color y con tilde,
      las que no llegaron a descubrir atenuadas. Asi queda claro que
-     lograron y que se perdieron. Los QR siguen visibles en ambos casos:
-     son el unico camino a la web y no conviene esconderlos. */
+     lograron y que se perdieron. El orden de la grilla sale del orden
+     de las claves de `novedades` en content.js. */
   var TILDE_MINI = '<span class="tilde-mini"><svg viewBox="0 0 24 24" fill="none" ' +
     'stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round">' +
     '<path d="M20 6 9 17l-5-5"/></svg></span>';
@@ -365,20 +400,17 @@
       var abierta = st.novedades.indexOf(k) !== -1;
       if (abierta) logradas++;
 
+      // Eczagen usa su isologotipo horizontal en lugar del titulo en texto.
+      var encabezado = n.logoCierre
+        ? '<img class="nov-card-logo" src="' + n.logoCierre + '" alt="' + n.titulo + '">'
+        : '<h4></h4>';
+
       var d = document.createElement('div');
       d.className = 'nov-card' + (abierta ? '' : ' nov-card--trabada');
-      d.innerHTML = (abierta ? TILDE_MINI : CANDADO_MINI) +
-        '<h4></h4><p></p>' + (n.qr ? '<div class="qr"></div>' : '');
-      d.querySelector('h4').textContent = n.titulo;
+      d.innerHTML = (abierta ? TILDE_MINI : CANDADO_MINI) + encabezado + '<p></p>';
+      if (!n.logoCierre) d.querySelector('h4').innerHTML = n.titulo;
       d.querySelector('p').textContent = n.bajada;
 
-      if (n.qr) {
-        var caja = d.querySelector('.qr');
-        var im = new Image();
-        im.src = n.qr;
-        im.onerror = function () { im.remove(); }; // sin QR aun: la caja queda vacia, sin texto
-        caja.appendChild(im);
-      }
       cont.appendChild(d);
     });
 
