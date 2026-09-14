@@ -327,6 +327,11 @@ html,body{
 .placa-img{ display:block; max-width:66%; max-height:470px; margin:70px auto 66px; border-radius:20px; }
 /* Con foto, el aire hasta el boton lo maneja entero el margen de la
    imagen: si el boton aportara el suyo, no se podria achicar por debajo. */
+/* El boton de la placa NO flota. En la pantalla de inicio la flotacion
+   invita al primer toque, pero aca pelea contra el ritmo parejo que pide
+   la placa: al moverse 10px, el hueco contra el texto de arriba oscila y
+   deja de verse equidistante. */
+.boton--placa{ animation:none; }
 .placa--con-foto .boton--placa{ margin-top:0; }
 
 /* --- Placa de MARCA: el isologotipo hace de titulo ---
@@ -335,11 +340,17 @@ html,body{
 .placa-logo{ display:none; }
 .placa--marca .placa-logo{
   display:block; max-width:66%; max-height:290px;
-  object-fit:contain; margin:30px auto 10px;
+  object-fit:contain; margin:0 auto;
 }
 .placa--marca .placa-titulo{ display:none; }
-/* Mismo motivo que arriba: el aire lo define el margen del logo. */
-.placa--marca .placa-bajada{ margin-top:0; }
+
+/* Aire parejo entre TODOS los elementos de la placa de marca, boton
+   incluido. Lo reparte repartirPlaca() en game.js midiendo la tinta;
+   este es el unico numero que hay que tocar para abrir o cerrar el
+   ritmo. Los margin-bottom van en cero para no competir con el reparto,
+   que se hace enteramente con margin-top. */
+.placa--marca{ --placa-ritmo:56px; }
+.placa--marca .candado{ margin-bottom:0; }
 
 /* Cartel de fase */
 #modal-fase .placa{ background:transparent; box-shadow:none; }

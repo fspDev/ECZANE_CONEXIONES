@@ -389,3 +389,48 @@ Tres detalles que hubo que resolver:
   reparto sale mal, así que se reintenta en el evento `load`.
 
 Los márgenes del CSS quedan como punto de partida: los recalcula el JS.
+
+## Octava ronda — ritmo parejo en la placa de marca
+
+El cliente pidió, sobre la placa de Eczagen: más aire alrededor del logo y
+que **todos** los elementos queden equidistantes, botón incluido.
+
+Los huecos visibles antes eran 42, 37, 21, 35 y 91 px. Ahora los cinco
+son **56 px exactos**.
+
+Lo hace `repartirPlaca()` en `game.js`, que recorre los elementos visibles
+de la placa y ajusta cada `margin-top` hasta que todos los huecos de tinta
+midan lo mismo. El valor sale de la variable CSS `--placa-ritmo`, así que
+para abrir o cerrar el ritmo se toca **un solo número**:
+
+```css
+.placa--marca{ --placa-ritmo:56px; }
+```
+
+Todo el reparto va por `margin-top`; los `margin-bottom` del CSS quedan en
+cero para que no compitan ni colapsen contra él.
+
+### Dos trampas que costó ver
+
+1. **Los transforms mienten sobre la geometría.** La primera versión medía
+   con `getBoundingClientRect()` y daba huecos raros: el candado arranca su
+   animación en `scale(.4)` y el botón heredaba la flotación de `.boton`
+   (`translateY` de hasta 10 px). El rect incluye esos transforms; el
+   layout no. Se pasó todo a `offsetTop`/`offsetHeight`, que los ignoran —
+   y de paso se pudo borrar el factor de escala del lienzo, porque esas
+   propiedades ya vienen en unidades de lienzo.
+2. **La regla `.boton--placa` se había perdido.** Un regex de una ronda
+   anterior (`/CIERRE[\s\S]*$/`) barrió hasta el final del archivo y se
+   llevó puesta esa regla, que estaba al final. Desde entonces el botón
+   "Sigamos" heredaba todo de `.boton`, incluida la flotación infinita, que
+   hacía oscilar el hueco contra el texto entre 46 y 56 px. Se restauró
+   con `animation:none`: en la pantalla de inicio la flotación invita al
+   primer toque, pero dentro de una placa pelea contra el ritmo parejo.
+
+### Lo que NO se tocó
+
+La placa de producto (Eczahedge) conserva su jerarquía tipográfica: el
+rótulo pegado al título, y la foto centrada entre el texto y el botón
+(70/70) como se había aprobado. Aplicarle el mismo ritmo uniforme
+separaría el rótulo del título, que están pensados como una unidad.
+Queda a criterio del cliente si se unifica.

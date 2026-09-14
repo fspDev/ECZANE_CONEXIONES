@@ -329,16 +329,19 @@
      del medio queda opticamente corrido. Se mide con las metricas de la
      fuente, igual que en centrarTitulo().
 
-     `k` es la escala vigente (la del lienzo, mas la de la animacion de
-     entrada de la placa): getBoundingClientRect devuelve pixeles ya
-     escalados y las metricas de la fuente no, asi que todo se lleva a
-     unidades de lienzo antes de compararlo. */
+     Se usa offsetTop/offsetHeight y no getBoundingClientRect porque la
+     geometria de layout ignora los transforms. El rect vendria escalado
+     por el lienzo y ademas deformado por las animaciones de entrada (la
+     de la placa y la del candado, que arranca en scale(.4)), y mezclarlo
+     con metricas de fuente daria cualquier cosa. */
   var medidor = null;
-  function bordesTinta(el, k) {
-    var r = el.getBoundingClientRect();
-    var arriba = r.top / k;
-    if (el.tagName === 'IMG' || el.tagName === 'BUTTON') {
-      return { arriba: arriba, abajo: r.bottom / k };
+  function bordesTinta(el) {
+    var arriba = el.offsetTop;
+    var alto = el.offsetHeight;
+    // Imagenes, botones (el borde visible es la pastilla, no la letra) y
+    // cualquier elemento sin texto: la caja ya es el borde visible.
+    if (el.tagName === 'IMG' || el.tagName === 'BUTTON' || !el.textContent.trim()) {
+      return { arriba: arriba, abajo: arriba + alto };
     }
 
     var cs = getComputedStyle(el);
@@ -355,7 +358,7 @@
     var texto = el.textContent.trim();
     if (cs.textTransform === 'uppercase') texto = texto.toUpperCase();
     var m = medidor.measureText(texto || 'Hg');
-    var lineas = Math.max(1, Math.round((r.height / k) / lh));
+    var lineas = Math.max(1, Math.round(alto / lh));
 
     return {
       arriba: arriba + baseSuperior - (m.actualBoundingBoxAscent || asc),
@@ -370,19 +373,53 @@
     if (!medio || !arriba || !abajo) return;
     if (getComputedStyle(medio).display === 'none') return;
 
-    var caja = medio.parentNode;
     for (var paso = 0; paso < 3; paso++) {
-      var k = (caja.getBoundingClientRect().width / caja.offsetWidth) || 1;
-      var gArriba = bordesTinta(medio, k).arriba - bordesTinta(arriba, k).abajo;
-      var gAbajo = bordesTinta(abajo, k).arriba - bordesTinta(medio, k).abajo;
+      var gArriba = bordesTinta(medio).arriba - bordesTinta(arriba).abajo;
+      var gAbajo = bordesTinta(abajo).arriba - bordesTinta(medio).abajo;
       var objetivo = (gArriba + gAbajo) / 2;
       var dArriba = objetivo - gArriba;
       var dAbajo = objetivo - gAbajo;
-      if (Math.abs(dArriba) < 0.5 && Math.abs(dAbajo) < 0.5) break;
+      // offsetTop viene redondeado a enteros, asi que menos de 1px es ruido.
+      if (Math.abs(dArriba) < 1 && Math.abs(dAbajo) < 1) break;
 
       var cs = getComputedStyle(medio);
       medio.style.marginTop = ((parseFloat(cs.marginTop) || 0) + dArriba) + 'px';
       medio.style.marginBottom = ((parseFloat(cs.marginBottom) || 0) + dAbajo) + 'px';
+    }
+  }
+
+  /* Deja el MISMO aire visible entre todos los elementos de la placa,
+     boton incluido. El valor sale de --placa-ritmo, asi que se regula
+     desde el CSS sin tocar esto. Todo el reparto se hace con margin-top:
+     los margin-bottom del CSS estan en cero para que no compitan. */
+  function repartirPlaca(placa) {
+    var ritmo = parseFloat(getComputedStyle(placa).getPropertyValue('--placa-ritmo'));
+    if (!ritmo) return;
+
+    var hijos = [].slice.call(placa.children);
+    // Se limpia lo que haya quedado de la placa anterior.
+    hijos.forEach(function (el) { el.style.marginTop = ''; });
+
+    var visibles = hijos.filter(function (el) {
+      return getComputedStyle(el).display !== 'none' &&
+             el.getBoundingClientRect().height > 0.5;
+    });
+    if (visibles.length < 2) return;
+
+    for (var paso = 0; paso < 4; paso++) {
+      var listo = true;
+      for (var i = 1; i < visibles.length; i++) {
+        var hueco = bordesTinta(visibles[i]).arriba -
+                    bordesTinta(visibles[i - 1]).abajo;
+        var delta = ritmo - hueco;
+        // offsetTop viene redondeado a enteros: menos de 1px es ruido.
+        if (Math.abs(delta) < 1) continue;
+        listo = false;
+        var cs = getComputedStyle(visibles[i]);
+        visibles[i].style.marginTop =
+          ((parseFloat(cs.marginTop) || 0) + delta) + 'px';
+      }
+      if (listo) break;
     }
   }
 
@@ -405,13 +442,15 @@
       return;
     }
 
-    if (n.imagen) {
-      // Arriba de la foto esta el detalle, salvo que esa novedad no tenga.
+    if (n.logoMarca) {
+      // Placa de marca: ritmo parejo entre todos los elementos.
+      repartirPlaca($('#modal-novedad .placa'));
+    } else if (n.imagen) {
+      // Placa de producto: solo se centra la foto entre el texto y el
+      // boton; el resto conserva su jerarquia tipografica (el rotulo
+      // pegado al titulo, por ejemplo).
       var encima = n.detalle ? $('#nov-detalle') : $('#nov-bajada');
       centrarVertical(img, encima, $('#btn-novedad'));
-    }
-    if (n.logoMarca) {
-      centrarVertical(logo, $('#nov-kicker'), $('#nov-bajada'));
     }
   }
 
