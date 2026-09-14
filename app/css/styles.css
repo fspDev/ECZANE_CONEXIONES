@@ -320,19 +320,26 @@ html,body{
 .placa-titulo{ font-family:'DIN Pro',sans-serif; font-weight:900; font-size:82px; line-height:1.12; color:var(--azul); margin-top:18px; }
 .placa-bajada{ font-size:36px; line-height:1.4; font-weight:600; margin-top:28px; color:var(--tinta); }
 .placa-detalle{ font-size:29px; line-height:1.5; color:var(--gris); margin-top:22px; }
-/* Mas aire arriba y abajo de la foto de producto, y foto mas chica para
-   ganarlo sin estirar la placa (pedido del cliente sobre Eczahedge). */
-.placa-img{ max-width:66%; max-height:470px; margin:70px 0 66px; border-radius:20px; }
+/* Foto de producto. Los margenes de aca son solo el punto de partida:
+   centrarVertical() en game.js los recalcula para que el aire de arriba
+   y el de abajo se VEAN iguales. `display:block` es necesario para que
+   la imagen no arrastre el hueco de la linea base debajo. */
+.placa-img{ display:block; max-width:66%; max-height:470px; margin:70px auto 66px; border-radius:20px; }
+/* Con foto, el aire hasta el boton lo maneja entero el margen de la
+   imagen: si el boton aportara el suyo, no se podria achicar por debajo. */
+.placa--con-foto .boton--placa{ margin-top:0; }
 
 /* --- Placa de MARCA: el isologotipo hace de titulo ---
    No hace falta reordenar: en el HTML el logo ya viene despues del
    kicker y antes de los textos, que es donde tiene que ir. */
 .placa-logo{ display:none; }
 .placa--marca .placa-logo{
-  display:inline-block; max-width:66%; max-height:290px;
-  object-fit:contain; margin:30px 0 10px;
+  display:block; max-width:66%; max-height:290px;
+  object-fit:contain; margin:30px auto 10px;
 }
 .placa--marca .placa-titulo{ display:none; }
+/* Mismo motivo que arriba: el aire lo define el margen del logo. */
+.placa--marca .placa-bajada{ margin-top:0; }
 
 /* Cartel de fase */
 #modal-fase .placa{ background:transparent; box-shadow:none; }

@@ -322,6 +322,99 @@
     }
   }
 
+  /* Borde VISIBLE (de tinta) de un elemento, arriba y abajo.
+     En una imagen o un boton el borde de la caja ya es el borde visible.
+     En un texto no: la caja arrastra medio interlineado y el hueco de los
+     descendentes, que nadie ve. Si se reparte el aire por cajas, el bloque
+     del medio queda opticamente corrido. Se mide con las metricas de la
+     fuente, igual que en centrarTitulo().
+
+     `k` es la escala vigente (la del lienzo, mas la de la animacion de
+     entrada de la placa): getBoundingClientRect devuelve pixeles ya
+     escalados y las metricas de la fuente no, asi que todo se lleva a
+     unidades de lienzo antes de compararlo. */
+  var medidor = null;
+  function bordesTinta(el, k) {
+    var r = el.getBoundingClientRect();
+    var arriba = r.top / k;
+    if (el.tagName === 'IMG' || el.tagName === 'BUTTON') {
+      return { arriba: arriba, abajo: r.bottom / k };
+    }
+
+    var cs = getComputedStyle(el);
+    var fs = parseFloat(cs.fontSize);
+    var lh = cs.lineHeight === 'normal' ? fs * 1.2 : parseFloat(cs.lineHeight);
+    if (!medidor) medidor = document.createElement('canvas').getContext('2d');
+    medidor.font = cs.fontWeight + ' ' + fs + 'px ' + cs.fontFamily;
+
+    var mf = medidor.measureText('Hg');
+    var asc = mf.fontBoundingBoxAscent || fs * 0.8;
+    var desc = mf.fontBoundingBoxDescent || fs * 0.2;
+    var baseSuperior = (lh - (asc + desc)) / 2 + asc;
+
+    var texto = el.textContent.trim();
+    if (cs.textTransform === 'uppercase') texto = texto.toUpperCase();
+    var m = medidor.measureText(texto || 'Hg');
+    var lineas = Math.max(1, Math.round((r.height / k) / lh));
+
+    return {
+      arriba: arriba + baseSuperior - (m.actualBoundingBoxAscent || asc),
+      abajo: arriba + baseSuperior + lh * (lineas - 1) + (m.actualBoundingBoxDescent || 0)
+    };
+  }
+
+  /* Deja el mismo aire VISIBLE arriba y abajo de `medio`, conservando el
+     total. Itera un par de veces porque los margenes de bloques vecinos
+     pueden colapsar y el primer ajuste no siempre entra entero. */
+  function centrarVertical(medio, arriba, abajo) {
+    if (!medio || !arriba || !abajo) return;
+    if (getComputedStyle(medio).display === 'none') return;
+
+    var caja = medio.parentNode;
+    for (var paso = 0; paso < 3; paso++) {
+      var k = (caja.getBoundingClientRect().width / caja.offsetWidth) || 1;
+      var gArriba = bordesTinta(medio, k).arriba - bordesTinta(arriba, k).abajo;
+      var gAbajo = bordesTinta(abajo, k).arriba - bordesTinta(medio, k).abajo;
+      var objetivo = (gArriba + gAbajo) / 2;
+      var dArriba = objetivo - gArriba;
+      var dAbajo = objetivo - gAbajo;
+      if (Math.abs(dArriba) < 0.5 && Math.abs(dAbajo) < 0.5) break;
+
+      var cs = getComputedStyle(medio);
+      medio.style.marginTop = ((parseFloat(cs.marginTop) || 0) + dArriba) + 'px';
+      medio.style.marginBottom = ((parseFloat(cs.marginBottom) || 0) + dAbajo) + 'px';
+    }
+  }
+
+  function centrarPlaca(n) {
+    var img = $('#nov-img');
+    var logo = $('#nov-logo');
+    // Se limpian los ajustes de la placa anterior: sin esto, los margenes
+    // calculados para una novedad se arrastrarian a la siguiente.
+    img.style.marginTop = ''; img.style.marginBottom = '';
+    logo.style.marginTop = ''; logo.style.marginBottom = '';
+
+    // Sin la imagen cargada su alto es 0 y el reparto sale mal. Se
+    // reintenta al terminar la carga; despues queda en cache.
+    var faltaImg = n.imagen && !img.complete;
+    var faltaLogo = n.logoMarca && !logo.complete;
+    if (faltaImg || faltaLogo) {
+      var reintentar = function () { centrarPlaca(n); };
+      if (faltaImg) img.addEventListener('load', reintentar, { once: true });
+      if (faltaLogo) logo.addEventListener('load', reintentar, { once: true });
+      return;
+    }
+
+    if (n.imagen) {
+      // Arriba de la foto esta el detalle, salvo que esa novedad no tenga.
+      var encima = n.detalle ? $('#nov-detalle') : $('#nov-bajada');
+      centrarVertical(img, encima, $('#btn-novedad'));
+    }
+    if (n.logoMarca) {
+      centrarVertical(logo, $('#nov-kicker'), $('#nov-bajada'));
+    }
+  }
+
   /* ---------- Modal de novedad ---------- */
   function mostrarNovedad(id, luego) {
     var n = C.novedades[id];
@@ -339,7 +432,9 @@
     var logo = $('#nov-logo');
     // La clase decide si el logo se ve: no se toca style.display para no
     // pisar la regla del CSS que lo mantiene oculto por defecto.
-    $('#modal-novedad .placa').classList.toggle('placa--marca', !!n.logoMarca);
+    var placa = $('#modal-novedad .placa');
+    placa.classList.toggle('placa--marca', !!n.logoMarca);
+    placa.classList.toggle('placa--con-foto', !!n.imagen);
     if (n.logoMarca) { logo.src = n.logoMarca; logo.alt = n.titulo; }
     else { logo.removeAttribute('src'); }
 
@@ -349,9 +444,10 @@
     img.onerror = function () { img.style.display = 'none'; };
 
     // La placa queda en pantalla hasta que toquen "Sigamos".
-    // Mientras tanto el reloj se detiene: leerla no gasta los 60 segundos.
+    // Mientras tanto el reloj se detiene: leerla no gasta el tiempo de juego.
     $('#modal-novedad').classList.add('activo');
     ajustarTituloPlaca();   // recien ahora la placa tiene ancho medible
+    centrarPlaca(n);        // y recien ahora se pueden medir los huecos
     if (cfg.pausarEnModales) st.pausado = true;
 
     var btn = $('#btn-novedad');

@@ -24,7 +24,7 @@ const CONTENIDO = {
 
   /* ---------- Ajustes generales ---------- */
   config: {
-    duracionSegundos: 60,      // contador del brief
+    duracionSegundos: 90,      // el brief decia 60; el cliente lo subio a 90
     msAcierto: 2200,           // cuanto dura el cartel de acierto (no frena el juego)
     msError: 1800,             // cuanto dura el cartel de error (no frena el juego)
     msFase: 1600,              // cartel de cambio de pantalla
@@ -39,7 +39,7 @@ const CONTENIDO = {
     botonInicio:     'Iniciar misión',
     instruccion:     'Elegí dos tarjetones para formar una conexión.',
     cuentaRegresiva: '¿Listos para conectar?',
-    tiempo:          'Tienen 60 segundos.',
+    tiempo:          'Tienen 90 segundos.',
     acierto:         'Conexión lograda',
     aciertoApoyo:    'Excelente, encontraron una asociación correcta.',
     desbloqueo:      'Novedad desbloqueada',

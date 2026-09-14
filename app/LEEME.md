@@ -352,3 +352,40 @@ simulado.
 Al sacarle el texto al tarjetón de Eczagen, el logo quedaba chico frente a
 las tarjetas vecinas (que llenan el ancho con el nombre a 58px), así que se
 subió de 96px a 140px de alto. Es un ajuste óptico, no lo pidió el cliente.
+
+## Séptima ronda — ajustes finales (2026-09-14)
+
+1. **El reloj pasa de 60 a 90 segundos.** Se cambia en
+   `config.duracionSegundos`. Ojo: el número también estaba escrito en el
+   copy `tiempo` ("Tienen 60 segundos") y en el valor inicial del HUD en
+   el HTML, así que son tres lugares. La barra de progreso ya se calculaba
+   contra `duracionSegundos`, esa se ajustó sola.
+2. **Centrado vertical de la foto (Eczahedge) y del logo (Eczagen).** El
+   cliente pidió que el aire de arriba y el de abajo sea el mismo.
+
+### Por qué no alcanzaba con poner márgenes iguales
+
+Una caja de texto no termina donde termina la letra: arrastra medio
+interlineado y el hueco de los descendentes, que nadie ve. Con márgenes
+iguales, el bloque del medio queda ópticamente corrido hacia el texto.
+
+La solución es `centrarVertical()` en `game.js`: mide el borde de **tinta**
+real (con las métricas de la fuente, igual que `centrarTitulo()` en la
+pantalla de inicio), calcula los dos huecos visibles y reparte el total en
+partes iguales ajustando los márgenes de la imagen. Verificado: 70 px y
+70 px en Eczahedge, 29 px y 29 px en Eczagen.
+
+Tres detalles que hubo que resolver:
+
+- **Unidades.** `getBoundingClientRect()` devuelve píxeles ya escalados
+  (por el lienzo 1080×1920 y además por la animación de entrada de la
+  placa), y las métricas de la fuente no. Todo se lleva a unidades de
+  lienzo dividiendo por la escala vigente antes de comparar.
+- **Colapso de márgenes.** Se anula el margen del vecino de abajo
+  (`.placa--con-foto .boton--placa` y `.placa--marca .placa-bajada`) para
+  que el hueco lo controle enteramente el margen de la imagen; si no, no
+  se podía achicar por debajo del margen del vecino.
+- **Imagen sin cargar.** Si la foto todavía no cargó su alto es 0 y el
+  reparto sale mal, así que se reintenta en el evento `load`.
+
+Los márgenes del CSS quedan como punto de partida: los recalcula el JS.
