@@ -434,3 +434,43 @@ rótulo pegado al título, y la foto centrada entre el texto y el botón
 (70/70) como se había aprobado. Aplicarle el mismo ritmo uniforme
 separaría el rótulo del título, que están pensados como una unidad.
 Queda a criterio del cliente si se unifica.
+
+## Novena ronda — dos bugs de la notebook del congreso
+
+### "Nueva misión" arrancaba el juego solo
+
+Al tocar "Nueva misión" la app volvía al inicio y, un par de segundos
+después, se metía sola en el juego.
+
+La causa: el juego agenda cosas a futuro con `setTimeout` — mostrar el
+"hecho" del acierto, pasar de fase, limpiar un error, los carteles. Si la
+partida terminaba **antes** de que venciera uno de esos plazos (lo típico:
+se completa la última conexión de una fase, que agenda `seguir` a 2,2 s, y
+en el medio se acaba el tiempo), el callback vencía igual, ya sobre la
+pantalla de cierre o la de inicio, y ejecutaba `pintarFase()` + `irA('juego')`.
+De ahí que "empezara directamente el juego".
+
+Ahora todos esos plazos pasan por `demorar()`, que los registra en
+`st.demoras`. `frenarPartida()` los cancela de una — junto con el reloj, la
+cuenta regresiva, los dos modales y el `onclick` del botón de la placa, que
+también quedaba apuntando al flujo viejo. Se llama en tres lugares: al
+cerrar la partida, al tocar "Nueva misión" y al arrancar una nueva.
+
+Regla para acordarse: **nada que se agende a futuro puede sobrevivir al
+final de la partida.** Si mañana se agrega otro `setTimeout` dentro del
+juego, tiene que ser con `demorar()`.
+
+### El logo de Eczagen no aparecía en los tarjetones
+
+En el repo el archivo está y se ve bien (verificado en fase 3 y 4). Si en
+una copia de la carpeta falta o se corrompió, antes el tarjetón quedaba
+vacío y no había forma de saber por qué. Dos redes:
+
+1. `revisarImagenes()` corre al abrir la app y escribe en la consola
+   `FALTA EL ARCHIVO: <ruta>` por cada imagen que no cargue — recorre las
+   del HTML, los `logoSolucion` de las fases y los logos de las novedades.
+2. Si el PNG de un tarjetón falla, el `onerror` lo reemplaza por el nombre
+   en texto. En el kiosco es preferible un tarjetón que se lee a uno vacío.
+
+También se completó el mapa de tipos MIME de `server.js`, al que le
+faltaban `.woff2`, `.jpeg`, `.webp`, `.gif` e `.ico`.

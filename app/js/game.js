@@ -33,8 +33,46 @@
     bloqueado: false,
     restante: cfg.duracionSegundos,
     tick: null,
+    cuenta: null,        // intervalo de la cuenta regresiva
+    demoras: [],         // setTimeout pendientes de la partida en curso
     pausado: false
   };
+
+  /* ---------- Demoras cancelables ----------
+     Todo lo que el juego agenda a futuro (mostrar el "hecho", pasar de
+     fase, limpiar un error, los carteles) pasa por aca. Si la partida
+     termina antes de que venza el plazo — porque se acabo el tiempo o
+     porque volvieron al inicio — esos callbacks tienen que morir: si no,
+     vencen sobre otra pantalla y la vuelven a mandar al juego. */
+  function demorar(ms, fn) {
+    var id = setTimeout(function () {
+      var i = st.demoras.indexOf(id);
+      if (i !== -1) st.demoras.splice(i, 1);
+      fn();
+    }, ms);
+    st.demoras.push(id);
+    return id;
+  }
+
+  function limpiarDemoras() {
+    st.demoras.forEach(clearTimeout);
+    st.demoras = [];
+    if (st.cuenta) { clearInterval(st.cuenta); st.cuenta = null; }
+    clearTimeout(avisoTO);
+  }
+
+  /* Corta la partida en seco: reloj, plazos pendientes, carteles y el
+     boton de la placa (que queda con un onclick apuntando al flujo viejo). */
+  function frenarPartida() {
+    detenerReloj();
+    limpiarDemoras();
+    st.pausado = false;
+    st.bloqueado = false;
+    $('#btn-novedad').onclick = null;
+    $('#modal-novedad').classList.remove('activo');
+    $('#modal-fase').classList.remove('activo');
+    $('#aviso').classList.remove('ver');
+  }
 
   /* ---------- Navegacion entre pantallas ---------- */
   function irA(nombre) {
@@ -70,10 +108,10 @@
 
   function pausar(ms, luego) {
     if (cfg.pausarEnModales) st.pausado = true;
-    setTimeout(function () {
+    demorar(ms, function () {
       if (cfg.pausarEnModales) st.pausado = false;
       luego();
-    }, ms);
+    });
   }
 
   /* ---------- Construccion del tablero por fase ---------- */
@@ -141,6 +179,19 @@
         '" alt="' + textoSolucion + '">'
       : '<div class="' + claseMarca + '">' + par.solucion + '</div>';
     b.innerHTML = marca + mol;
+    // Red de seguridad para el kiosco: si el PNG no esta o no se puede
+    // leer, el tarjeton no puede quedar vacio — se cae al nombre en texto,
+    // que es lo que habia antes de sumar el isologotipo.
+    var im = b.querySelector('.marca-logo-completo');
+    if (im) {
+      im.addEventListener('error', function () {
+        console.warn('No se pudo cargar ' + im.getAttribute('src') + ' — se usa el nombre en texto.');
+        var d = document.createElement('div');
+        d.className = claseMarca;
+        d.innerHTML = par.solucion;
+        im.parentNode.replaceChild(d, im);
+      });
+    }
     b.addEventListener('click', function () { tocar(b); });
     return b;
   }
@@ -195,13 +246,13 @@
       var fase = C.fases[st.faseIdx];
       var faseCompleta = $('#grilla').querySelectorAll('.tarjeton--a.ok').length >= fase.pares.length;
 
-      setTimeout(function () {
+      demorar(cfg.msAcierto, function () {
         elA.classList.add('hecho'); elB.classList.add('hecho');
-      }, cfg.msAcierto);
+      });
 
       if (faseCompleta) {
         st.bloqueado = true;
-        setTimeout(seguir, cfg.msAcierto);
+        demorar(cfg.msAcierto, seguir);
       } else {
         st.bloqueado = false;
       }
@@ -211,9 +262,9 @@
       aviso(C.copy.error, C.copy.errorApoyo, true);
       st.bloqueado = false;
 
-      setTimeout(function () {
+      demorar(cfg.msError, function () {
         elA.classList.remove('error'); elB.classList.remove('error');
-      }, cfg.msError);
+      });
     }
   }
 
@@ -553,9 +604,7 @@
   }
 
   function cerrar() {
-    detenerReloj();
-    $('#modal-novedad').classList.remove('activo');
-    $('#modal-fase').classList.remove('activo');
+    frenarPartida();
     $('#cierre-num').textContent = st.conexiones;
     $('#cierre-total').textContent = '/' + TOTAL;
     $('#cierre-msg').textContent = C.copy.cierre;
@@ -565,6 +614,7 @@
 
   /* ---------- Arranque de partida ---------- */
   function iniciar() {
+    frenarPartida();          // por si quedo algo vivo de la partida anterior
     st.faseIdx = 0;
     st.conexiones = 0;
     st.novedades = [];
@@ -579,10 +629,10 @@
     num.textContent = n;
     num.classList.add('pulso');
 
-    var iv = setInterval(function () {
+    st.cuenta = setInterval(function () {
       n--;
       if (n <= 0) {
-        clearInterval(iv);
+        clearInterval(st.cuenta); st.cuenta = null;
         pintarFase();
         irA('juego');
         arrancarReloj();
@@ -800,13 +850,42 @@
 
   /* ---------- Eventos ---------- */
   $('#btn-iniciar').addEventListener('click', iniciar);
-  $('#btn-reiniciar').addEventListener('click', function () { irA('inicio'); });
+  $('#btn-reiniciar').addEventListener('click', function () {
+    frenarPartida();   // sin esto, un plazo pendiente reabre el juego solo
+    irA('inicio');
+  });
 
   // Kiosco: sin zoom por doble toque ni menu contextual.
   document.addEventListener('contextmenu', function (e) { e.preventDefault(); });
   document.addEventListener('gesturestart', function (e) { e.preventDefault(); });
 
+  /* ---------- Chequeo de assets ----------
+     El kiosco corre sin internet y a veces sobre una copia de la carpeta
+     que viajo por mail o pendrive. Si en el camino se perdio una imagen,
+     conviene enterarse al abrir y no en medio de la demo: esto avisa por
+     consola cual falta, con el nombre exacto del archivo. */
+  function revisarImagenes() {
+    var rutas = [];
+    [].forEach.call(document.images, function (i) {
+      if (i.getAttribute('src')) rutas.push(i.getAttribute('src'));
+    });
+    C.fases.forEach(function (f) {
+      f.pares.forEach(function (p) { if (p.logoSolucion) rutas.push(p.logoSolucion); });
+    });
+    Object.keys(C.novedades).forEach(function (k) {
+      ['logoMarca', 'logoCierre', 'imagen'].forEach(function (campo) {
+        if (C.novedades[k][campo]) rutas.push(C.novedades[k][campo]);
+      });
+    });
+    rutas.filter(function (r, i) { return rutas.indexOf(r) === i; }).forEach(function (r) {
+      var t = new Image();
+      t.onerror = function () { console.error('FALTA EL ARCHIVO: ' + r); };
+      t.src = r;
+    });
+  }
+
   pintarCopys();
+  revisarImagenes();
   irA('inicio');
   ajustarLogos();
   // Se remide cuando terminan de cargar las DIN Pro: antes el ancho
