@@ -184,13 +184,17 @@
     // que es lo que habia antes de sumar el isologotipo.
     var im = b.querySelector('.marca-logo-completo');
     if (im) {
-      im.addEventListener('error', function () {
+      var aTexto = function () {
         console.warn('No se pudo cargar ' + im.getAttribute('src') + ' — se usa el nombre en texto.');
         var d = document.createElement('div');
         d.className = claseMarca;
         d.innerHTML = par.solucion;
-        im.parentNode.replaceChild(d, im);
-      });
+        if (im.parentNode) im.parentNode.replaceChild(d, im);
+      };
+      im.addEventListener('error', aTexto);
+      // Si la imagen ya venia fallada de la cache, el evento `error` ya paso
+      // y nadie lo escucho: `complete` en true con ancho 0 delata ese caso.
+      if (im.complete && im.naturalWidth === 0) aTexto();
     }
     b.addEventListener('click', function () { tocar(b); });
     return b;

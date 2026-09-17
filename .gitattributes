@@ -1,0 +1,16 @@
+# Esta maquina tiene core.autocrlf=true. Sin este archivo, Git decide solo
+# que es texto y que es binario, y esa decision puede cambiar de maquina en
+# maquina. Aca queda fijado para que una copia del repo sea byte por byte
+# igual a otra, que es justo lo que el kiosco necesita.
+* text=auto
+
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.gif  binary
+*.ico  binary
+*.woff binary
+*.woff2 binary
+*.ttf  binary
+*.otf  binary
+*.pdf  binary
